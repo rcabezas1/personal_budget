@@ -1,14 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/colors/gf_color.dart';
-import 'package:getwidget/components/button/gf_button.dart';
-import 'package:getwidget/components/button/gf_button_bar.dart';
-import 'package:getwidget/components/card/gf_card.dart';
-import 'package:getwidget/components/list_tile/gf_list_tile.dart';
-import 'package:getwidget/shape/gf_button_shape.dart';
-import 'package:getwidget/types/gf_button_type.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 
-import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:personal_budget/budget/budget_provider.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
@@ -16,26 +10,30 @@ import 'package:personal_budget/service/mongo_budget_service.dart';
 import 'package:personal_budget/service/mongo_cycle_service.dart';
 import 'package:provider/provider.dart';
 
-import '../budget/budget_list.dart';
+final dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
 
 class CycleCard extends StatefulWidget {
-  const CycleCard({Key? key, required this.cycle}) : super(key: key);
+  const CycleCard(
+      {Key? key, required this.cycle, required this.input, this.delete})
+      : super(key: key);
 
   final BudgetCycle cycle;
+  final bool input;
+  final AsyncValueSetter<BudgetCycle>? delete;
 
   @override
   CycleCardState createState() => CycleCardState();
 }
 
 class CycleCardState extends State<CycleCard> {
-  final dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
   bool saving = false;
   @override
   Widget build(BuildContext context) {
     return GFCard(
         title: GFListTile(
           avatar: AvatarLoader(saving: saving, avatar: "cycle"),
-          title: _inputDescription(),
+          subTitle: _inputDescription(),
+          title: _toggleActive(),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -73,40 +71,70 @@ class CycleCardState extends State<CycleCard> {
     );
   }
 
+  _toggleActive() {
+    return GFToggle(
+        onChanged: (val) {
+          setState(() => widget.cycle.enabled = val ?? false);
+        },
+        value: widget.cycle.enabled);
+  }
+
   _datePicker() async {
     DateTime startDate = widget.cycle.startDate;
     DateTime endDate = widget.cycle.endDate;
-    List<DateTime>? pickedRange = await showOmniDateTimeRangePicker(
-      context: context,
-      startInitialDate: startDate,
-      endInitialDate: endDate,
-      barrierDismissible: false,
-      startFirstDate: startDate.subtract(const Duration(days: 100)),
-      startLastDate: startDate.add(const Duration(days: 100)),
-      endFirstDate: endDate.subtract(const Duration(days: 100)),
-      endLastDate: endDate.add(const Duration(days: 100)),
-    );
+    DateTimeRange? pickedRange = await showDateRangePicker(
+        context: context,
+        initialDateRange: DateTimeRange(start: startDate, end: endDate),
+        firstDate: startDate.subtract(const Duration(days: 100)),
+        lastDate: endDate.add(const Duration(days: 30)),
+        saveText: "Seleccionar",
+        useRootNavigator: false,
+        currentDate: DateTime.now());
 
-    if (pickedRange != null && pickedRange.isNotEmpty) {
+    if (pickedRange != null) {
       setState(() {
-        widget.cycle.startDate = pickedRange.first;
-        widget.cycle.endDate = pickedRange.last;
+        widget.cycle.startDate = pickedRange.start;
+        widget.cycle.endDate = pickedRange.end;
       });
     }
   }
 
   List<Widget> _buttons() {
-    return <Widget>[
-      GFButton(
-        onPressed: _validToSave() ? _saveBudgetCycle : null,
-        text: 'Agregar',
+    List<Widget> buttons = [];
+
+    buttons.add(GFButton(
+      onPressed: _validToSave() ? _saveBudgetCycle : null,
+      text: 'Guardar',
+      icon: Icon(
+        Icons.save,
+        color: _validToSave() ? GFColors.PRIMARY : GFColors.LIGHT,
+      ),
+      type: GFButtonType.outline2x,
+    ));
+    if (!widget.input) {
+      buttons.add(GFButton(
+        onPressed: _validToSave() ? _processCycle : null,
+        color: _validToSave() ? GFColors.FOCUS : GFColors.LIGHT,
+        text: 'Procesar',
         icon: Icon(
-          Icons.save,
-          color: _validToSave() ? GFColors.PRIMARY : GFColors.LIGHT,
+          Icons.double_arrow_rounded,
+          color: _validToSave() ? GFColors.FOCUS : GFColors.LIGHT,
         ),
         type: GFButtonType.outline2x,
-      )
-    ];
+      ));
+
+      buttons.add(GFButton(
+        onPressed: _validToSave() ? _delete : null,
+        color: _validToSave() ? GFColors.DANGER : GFColors.LIGHT,
+        text: 'Eliminar',
+        icon: Icon(
+          Icons.delete,
+          color: _validToSave() ? GFColors.DANGER : GFColors.LIGHT,
+        ),
+        type: GFButtonType.outline2x,
+      ));
+    }
+    return buttons;
   }
 
   _validToSave() {
@@ -117,18 +145,26 @@ class CycleCardState extends State<CycleCard> {
   _saveBudgetCycle() async {
     setState(() => saving = true);
     widget.cycle.mongoId = await MongoCycleService().save(widget.cycle);
-    await MongoBudgetService().updateCycle(widget.cycle);
     setState(() => saving = false);
-
     if (context.mounted) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const BudgetList()),
-          (route) => false);
-    } else {
       BudgetProvider provider =
           Provider.of<BudgetProvider>(context, listen: false);
-      provider.updateList();
+      await provider.searchCycles();
+      if (widget.input && context.mounted) {
+        Navigator.pop(context);
+      }
     }
+  }
+
+  _processCycle() async {
+    setState(() => saving = true);
+    await MongoBudgetService().updateCycle(widget.cycle);
+    setState(() => saving = false);
+  }
+
+  _delete() async {
+    setState(() => saving = true);
+    await widget.delete!(widget.cycle);
+    setState(() => saving = false);
   }
 }

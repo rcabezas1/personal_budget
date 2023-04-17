@@ -18,12 +18,25 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetMessages.length;
   }
 
+  int get countCycles {
+    return _budgetCycles.length;
+  }
+
   BudgetMessage getMessage(int index) {
     return _budgetMessages[index];
   }
 
-  Future<void> searchMessages() async {
+  BudgetCycle getCycles(int index) {
+    return _budgetCycles[index];
+  }
+
+  Future<void> searchCycles() async {
     _budgetCycles = await MongoCycleService().findAll();
+    notifyListeners();
+  }
+
+  Future<void> searchMessages() async {
+    await searchCycles();
 
     _smsMessages = await _query.querySms(
       kinds: [SmsQueryKind.inbox],

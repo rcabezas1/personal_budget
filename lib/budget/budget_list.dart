@@ -3,12 +3,13 @@ import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/budget/budget_message.dart';
-import 'package:personal_budget/cycle/cycles.dart';
+import 'package:personal_budget/cycle/cycles_list.dart';
 import 'package:personal_budget/movement/manual_movement.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_card.dart';
 import '../charts/budget_charts.dart';
+import '../loaders/screen_loader.dart';
 import '../service/mongo_budget_service.dart';
 import 'budget_provider.dart';
 
@@ -66,7 +67,8 @@ class _BudgetListState extends State<BudgetList> {
         body: Consumer<BudgetProvider>(
             builder: (context, provider, child) => RefreshIndicator(
                 onRefresh: _searchMessages,
-                child: _loading ? _loader() : _listBuilder(provider))),
+                child:
+                    _loading ? const ScreenLoader() : _listBuilder(provider))),
         child: alertWidget,
       ),
       floatingActionButton: FloatingActionButton(
@@ -88,13 +90,6 @@ class _BudgetListState extends State<BudgetList> {
           delete: _deleteBudget,
         );
       },
-    );
-  }
-
-  _loader() {
-    return const GFLoader(
-      type: GFLoaderType.circle,
-      size: 150,
     );
   }
 
@@ -162,7 +157,7 @@ class _BudgetListState extends State<BudgetList> {
   _showCycle() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const Cycles()),
+      MaterialPageRoute(builder: (context) => const ListCycles()),
     );
   }
 

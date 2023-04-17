@@ -46,7 +46,7 @@ class MongoBudgetService {
       var mongoBody = MongoRequest.updateAll(
           budgetCollection,
           FilterDate(cycle.startDate, cycle.endDate, "date"),
-          BudgetCycleUpdate(cycle.mongoId ?? '', false));
+          BudgetCycleUpdate(cycle.mongoId ?? '', cycle.enabled));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {

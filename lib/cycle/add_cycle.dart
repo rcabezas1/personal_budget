@@ -5,25 +5,26 @@ import 'package:uuid/uuid.dart';
 
 import 'budget_cycle.dart';
 
-class Cycles extends StatefulWidget {
-  const Cycles({Key? key}) : super(key: key);
+class AddCycles extends StatefulWidget {
+  const AddCycles({Key? key}) : super(key: key);
 
   @override
-  State<Cycles> createState() => _CyclesState();
+  State<AddCycles> createState() => _AddCyclesState();
 }
 
-class _CyclesState extends State<Cycles> {
+class _AddCyclesState extends State<AddCycles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: GFAppBar(
-          title: const Text('Ciclos de presupuesto'),
+          title: const Text('Agregar ciclos'),
         ),
         body: SingleChildScrollView(
             restorationId: "cycles",
             child: CycleCard(
               cycle: BudgetCycle(
-                  const Uuid().v4(), "", DateTime.now(), DateTime.now()),
+                  const Uuid().v4(), "", DateTime.now(), DateTime.now(), false),
+              input: true,
             )));
   }
 }
