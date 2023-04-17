@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:personal_budget/cycle/cycle_card.dart';
 import 'package:uuid/uuid.dart';
@@ -17,6 +18,7 @@ class _AddCyclesState extends State<AddCycles> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: GFAppBar(
+          backgroundColor: GFColors.PRIMARY,
           title: const Text('Agregar ciclos'),
         ),
         body: SingleChildScrollView(

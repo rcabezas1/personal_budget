@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:intl/intl.dart';
 
 import 'package:personal_budget/budget/budget_provider.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
@@ -10,7 +9,7 @@ import 'package:personal_budget/service/mongo_budget_service.dart';
 import 'package:personal_budget/service/mongo_cycle_service.dart';
 import 'package:provider/provider.dart';
 
-final dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
+import '../formats.dart';
 
 class CycleCard extends StatefulWidget {
   const CycleCard(

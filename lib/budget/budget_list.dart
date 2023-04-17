@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/budget/budget_message.dart';
-import 'package:personal_budget/cycle/cycles_list.dart';
-import 'package:personal_budget/movement/manual_movement.dart';
+import 'package:personal_budget/budget/add_budget.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_card.dart';
 import '../charts/budget_charts.dart';
+import '../formats.dart';
 import '../loaders/screen_loader.dart';
 import '../service/mongo_budget_service.dart';
 import 'budget_provider.dart';
@@ -25,11 +24,6 @@ class _BudgetListState extends State<BudgetList> {
 
   Widget? alertWidget;
   bool showblur = false;
-  final currencyFormat = NumberFormat.currency(
-    symbol: "",
-    decimalDigits: 0,
-    locale: "es-CO",
-  );
 
   @override
   void initState() {
@@ -41,6 +35,7 @@ class _BudgetListState extends State<BudgetList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: GFAppBar(
+        backgroundColor: GFColors.PRIMARY,
         title: const Text('Lista de Gastos'),
         actions: [
           GFIconButton(
@@ -52,10 +47,10 @@ class _BudgetListState extends State<BudgetList> {
             ),
           ),
           GFIconButton(
-            onPressed: _showCycle,
+            onPressed: _addBudgetMessage,
             type: GFButtonType.transparent,
             icon: const Icon(
-              Icons.currency_exchange_outlined,
+              Icons.add,
               color: GFColors.LIGHT,
             ),
           )
@@ -70,10 +65,6 @@ class _BudgetListState extends State<BudgetList> {
                 child:
                     _loading ? const ScreenLoader() : _listBuilder(provider))),
         child: alertWidget,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addBudgetMessage,
-        child: const Icon(Icons.add),
       ),
     );
   }
@@ -143,7 +134,7 @@ class _BudgetListState extends State<BudgetList> {
   _addBudgetMessage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ManualMovement()),
+      MaterialPageRoute(builder: (context) => const AddBudget()),
     );
   }
 
@@ -151,13 +142,6 @@ class _BudgetListState extends State<BudgetList> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const BudgetCharts()),
-    );
-  }
-
-  _showCycle() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ListCycles()),
     );
   }
 

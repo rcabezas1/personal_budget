@@ -1,15 +1,14 @@
-import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
-import 'package:personal_budget/budget/budget_list.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
+import 'package:personal_budget/principal.dart';
 
 import 'package:personal_budget/service/mongo_budget_service.dart';
 import 'package:provider/provider.dart';
 
+import '../formats.dart';
 import 'budget_message.dart';
 import 'budget_provider.dart';
 import 'budget_type.dart';
@@ -28,21 +27,9 @@ class BudgetCard extends StatefulWidget {
 
 class _BudgetCardState extends State<BudgetCard> {
   bool saving = false;
-  var currencyFormatter =
-      CurrencyTextInputFormatter(locale: "es-CO", symbol: "", decimalDigits: 0);
-
-  final currencyFormat = NumberFormat.currency(
-    symbol: "",
-    decimalDigits: 0,
-    locale: "es-CO",
-  );
-
-  final dateFormat = DateFormat("yyyy-MM-dd hh:mm a");
 
   @override
   void initState() {
-    currencyFormatter = CurrencyTextInputFormatter(
-        locale: "es-CO", symbol: "", decimalDigits: 0);
     super.initState();
   }
 
@@ -114,18 +101,18 @@ class _BudgetCardState extends State<BudgetCard> {
   _saveBudgetMessage() async {
     setState(() => saving = true);
     await MongoBudgetService().save(widget.message);
-    setState(() => saving = false);
 
     if (widget.input && context.mounted) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const BudgetList()),
+          MaterialPageRoute(builder: (context) => const Principal()),
           (route) => false);
     } else {
       BudgetProvider provider =
           Provider.of<BudgetProvider>(context, listen: false);
       provider.updateList();
     }
+    setState(() => saving = false);
   }
 
   _inputCommerce() {
@@ -154,7 +141,7 @@ class _BudgetCardState extends State<BudgetCard> {
 
   _inputValue() {
     return TextFormField(
-      inputFormatters: [currencyFormatter],
+      inputFormatters: [currencyInputTextFormatter],
       initialValue: _valueInitial(),
       keyboardType: TextInputType.number,
       style: const TextStyle(fontSize: GFSize.MEDIUM),
@@ -166,7 +153,8 @@ class _BudgetCardState extends State<BudgetCard> {
 
   _valueInitial() {
     if (widget.message.value != null) {
-      return currencyFormatter.format('${widget.message.value!.toInt()}');
+      return currencyInputTextFormatter
+          .format('${widget.message.value!.toInt()}');
     }
     return "";
   }
@@ -196,11 +184,11 @@ class _BudgetCardState extends State<BudgetCard> {
 
   _setValue(String value) {
     setState(() {
-      if (currencyFormatter.getUnformattedValue().isNaN) {
+      if (currencyInputTextFormatter.getUnformattedValue().isNaN) {
         widget.message.value = null;
       } else {
         widget.message.value =
-            currencyFormatter.getUnformattedValue().toDouble();
+            currencyInputTextFormatter.getUnformattedValue().toDouble();
       }
     });
   }

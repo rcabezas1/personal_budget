@@ -32,6 +32,7 @@ class BudgetProvider extends ChangeNotifier {
 
   Future<void> searchCycles() async {
     _budgetCycles = await MongoCycleService().findAll();
+    _budgetCycles.sort((one, two) => two.startDate.compareTo(one.startDate));
     notifyListeners();
   }
 
@@ -91,8 +92,9 @@ class BudgetProvider extends ChangeNotifier {
 
   bool _validCycle(BudgetMessage message) {
     if (message.valid) {
-      BudgetCycle cycle = _budgetCycles.last;
-      return message.date!.isAfter(cycle.endDate);
+      BudgetCycle cycle =
+          _budgetCycles.firstWhere((element) => element.enabled);
+      return message.date!.isAfter(cycle.startDate);
     }
     return false;
   }

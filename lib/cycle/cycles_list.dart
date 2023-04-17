@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/colors/gf_color.dart';
-import 'package:getwidget/components/alert/gf_alert.dart';
-import 'package:getwidget/components/appbar/gf_appbar.dart';
-import 'package:getwidget/components/button/gf_button.dart';
-import 'package:getwidget/components/floating_widget/gf_floating_widget.dart';
-import 'package:getwidget/shape/gf_button_shape.dart';
-import 'package:getwidget/types/gf_alert_type.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/cycle/add_cycle.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/cycle/cycle_card.dart';
@@ -13,16 +7,17 @@ import 'package:personal_budget/service/mongo_cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_provider.dart';
+import '../formats.dart';
 import '../loaders/screen_loader.dart';
 
-class ListCycles extends StatefulWidget {
-  const ListCycles({Key? key}) : super(key: key);
+class CyclesList extends StatefulWidget {
+  const CyclesList({Key? key}) : super(key: key);
 
   @override
-  State<ListCycles> createState() => _ListCyclesState();
+  State<CyclesList> createState() => _CyclesListState();
 }
 
-class _ListCyclesState extends State<ListCycles> {
+class _CyclesListState extends State<CyclesList> {
   bool showblur = false;
   bool _loading = false;
   Widget? alertWidget;
@@ -32,19 +27,28 @@ class _ListCyclesState extends State<ListCycles> {
     return Scaffold(
       appBar: GFAppBar(
         title: const Text('Lista de ciclos'),
+        backgroundColor: GFColors.PRIMARY,
+        actions: [
+          GFIconButton(
+            onPressed: _addCycle,
+            type: GFButtonType.transparent,
+            icon: const Icon(
+              Icons.add,
+              color: GFColors.LIGHT,
+            ),
+          )
+        ],
       ),
       body: GFFloatingWidget(
         showBlurness: showblur,
         verticalPosition: 80,
         body: Consumer<BudgetProvider>(
             builder: (context, provider, child) => RefreshIndicator(
-                onRefresh: _searcCycles,
+                onRefresh: _searchCycles,
                 child:
                     _loading ? const ScreenLoader() : _listBuilder(provider))),
         child: alertWidget,
       ),
-      floatingActionButton: FloatingActionButton(
-          onPressed: _addCycle, child: const Icon(Icons.add_card)),
     );
   }
 
@@ -63,7 +67,7 @@ class _ListCyclesState extends State<ListCycles> {
     );
   }
 
-  Future<void> _searcCycles() async {
+  Future<void> _searchCycles() async {
     setState(() {
       _loading = true;
     });
@@ -117,7 +121,7 @@ class _ListCyclesState extends State<ListCycles> {
   _doDelete(BudgetCycle message) async {
     await MongoCycleService()
         .delete(message.id)
-        .then((value) => _searcCycles());
+        .then((value) => _searchCycles());
     setState(() {
       alertWidget = null;
       showblur = false;
