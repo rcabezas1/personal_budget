@@ -1,6 +1,6 @@
-import 'package:personal_budget/service/mongo_number.dart';
+import 'package:personal_budget/service/mongo/mongo_number.dart';
 
-import '../service/mongo_date.dart';
+import '../service/mongo/mongo_date.dart';
 import 'budget_type.dart';
 
 class BudgetMessage {

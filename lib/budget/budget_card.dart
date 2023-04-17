@@ -5,8 +5,9 @@ import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:personal_budget/budget/budget_list.dart';
+import 'package:personal_budget/loaders/avatar_loader.dart';
 
-import 'package:personal_budget/service/mongo_service.dart';
+import 'package:personal_budget/service/mongo_budget_service.dart';
 import 'package:provider/provider.dart';
 
 import 'budget_message.dart';
@@ -52,7 +53,8 @@ class _BudgetCardState extends State<BudgetCard> {
   Widget build(BuildContext context) {
     return GFCard(
         title: GFListTile(
-          avatar: saving ? _avatarLoader() : _avatar(),
+          avatar: AvatarLoader(
+              saving: saving, avatar: widget.message.type?.nameType ?? ''),
           title: widget.input ? _inputCommerce() : _textCommerce(),
           subTitle: _inputDate(),
           description: widget.input ? _inputValue() : _textValue(),
@@ -66,23 +68,6 @@ class _BudgetCardState extends State<BudgetCard> {
             alignment: WrapAlignment.end,
             crossAxisAlignment: WrapCrossAlignment.end,
             children: _buttons()));
-  }
-
-  GFAvatar _avatar() {
-    return GFAvatar(
-      backgroundColor: GFColors.LIGHT,
-      backgroundImage:
-          AssetImage('assets/${widget.message.type?.nameType}.png'),
-    );
-  }
-
-  GFLoader _avatarLoader() {
-    return const GFLoader(
-      type: GFLoaderType.circle,
-      loaderColorOne: GFColors.INFO,
-      loaderColorTwo: GFColors.PRIMARY,
-      loaderColorThree: GFColors.INFO,
-    );
   }
 
   List<Widget> _buttons() {
@@ -128,7 +113,7 @@ class _BudgetCardState extends State<BudgetCard> {
 
   _saveBudgetMessage() async {
     setState(() => saving = true);
-    await MongoService().saveBudgetMessage(widget.message);
+    await MongoBudgetService().save(widget.message);
     setState(() => saving = false);
 
     if (widget.input && context.mounted) {

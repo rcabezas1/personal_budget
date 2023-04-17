@@ -3,12 +3,13 @@ import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/budget/budget_message.dart';
+import 'package:personal_budget/cycle/cycles.dart';
 import 'package:personal_budget/movement/manual_movement.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_card.dart';
 import '../charts/budget_charts.dart';
-import '../service/mongo_service.dart';
+import '../service/mongo_budget_service.dart';
 import 'budget_provider.dart';
 
 class BudgetList extends StatefulWidget {
@@ -46,7 +47,15 @@ class _BudgetListState extends State<BudgetList> {
             type: GFButtonType.transparent,
             icon: const Icon(
               Icons.bar_chart,
-              color: Colors.white,
+              color: GFColors.LIGHT,
+            ),
+          ),
+          GFIconButton(
+            onPressed: _showCycle,
+            type: GFButtonType.transparent,
+            icon: const Icon(
+              Icons.currency_exchange_outlined,
+              color: GFColors.LIGHT,
             ),
           )
         ],
@@ -123,8 +132,8 @@ class _BudgetListState extends State<BudgetList> {
   }
 
   _doDelete(BudgetMessage message) async {
-    await MongoService()
-        .deleteBudgetMessage(message.id)
+    await MongoBudgetService()
+        .delete(message.id)
         .then((value) => _updateCard(message));
     setState(() {
       alertWidget = null;
@@ -147,6 +156,13 @@ class _BudgetListState extends State<BudgetList> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const BudgetCharts()),
+    );
+  }
+
+  _showCycle() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Cycles()),
     );
   }
 

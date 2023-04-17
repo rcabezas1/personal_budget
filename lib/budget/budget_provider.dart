@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
-import 'package:personal_budget/service/mongo_service.dart';
+import 'package:personal_budget/cycle/budget_cycle.dart';
+import 'package:personal_budget/service/mongo_budget_service.dart';
+import 'package:personal_budget/service/mongo_cycle_service.dart';
 
 import '../budget/budget_message.dart';
 import '../sms/sms_budget_builder.dart';
@@ -9,6 +11,7 @@ class BudgetProvider extends ChangeNotifier {
   final SmsQuery _query = SmsQuery();
   List<SmsMessage> _smsMessages = [];
   final List<BudgetMessage> _budgetMessages = [];
+  List<BudgetCycle> _budgetCycles = [];
   List<BudgetMessage> _storedBudgetMessages = [];
 
   int get countMessage {
@@ -20,12 +23,14 @@ class BudgetProvider extends ChangeNotifier {
   }
 
   Future<void> searchMessages() async {
+    _budgetCycles = await MongoCycleService().findAll();
+
     _smsMessages = await _query.querySms(
       kinds: [SmsQueryKind.inbox],
       address: '87705',
       count: 100,
     );
-    _storedBudgetMessages = await MongoService().getBudgetMessages();
+    _storedBudgetMessages = await MongoBudgetService().findAllValid();
     _processMessages();
 
     debugPrint('Messages: ${_budgetMessages.length}');
@@ -39,6 +44,7 @@ class BudgetProvider extends ChangeNotifier {
 
   _processMessages() {
     _budgetMessages.clear();
+
     if (_smsMessages.isNotEmpty) {
       _addSmsMessages();
       _addNonSms();
@@ -60,7 +66,7 @@ class BudgetProvider extends ChangeNotifier {
     for (var message in _smsMessages) {
       String body = message.body ?? "";
       var budget = SmsBudgetBuilder.fromSMS(message.id, body);
-      if (budget.valid) {
+      if (_validCycle(budget)) {
         budget.sms = message.body;
         var element = _storedBudgetMessages.firstWhere(
             (stored) => budget.id == stored.id,
@@ -68,5 +74,13 @@ class BudgetProvider extends ChangeNotifier {
         _budgetMessages.add(element);
       }
     }
+  }
+
+  bool _validCycle(BudgetMessage message) {
+    if (message.valid) {
+      BudgetCycle cycle = _budgetCycles.last;
+      return message.date!.isAfter(cycle.endDate);
+    }
+    return false;
   }
 }
