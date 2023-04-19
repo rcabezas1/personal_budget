@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:getwidget/getwidget.dart';
+import 'package:personal_budget/layout/layout.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../layout/menu_list.dart';
 
 class BudgetCharts extends StatefulWidget {
   const BudgetCharts({Key? key}) : super(key: key);
@@ -23,10 +25,9 @@ class _BudgetChartsState extends State<BudgetCharts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: GFAppBar(
-        title: const Text('Estadisticas'),
-      ),
+    return Layout(
+      id: MenuList.charts,
+      title: MenuList.charts.menuTitle,
       body: WebViewWidget(controller: controller),
     );
   }

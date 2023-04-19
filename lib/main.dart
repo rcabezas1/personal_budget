@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:personal_budget/budget/budget_list.dart';
 import 'package:personal_budget/budget/budget_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:personal_budget/principal.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [Locale('es', 'CO'), Locale('en')],
       restorationScopeId: "personal_budget",
-      home: Principal(),
+      home: BudgetList(),
     );
   }
 }

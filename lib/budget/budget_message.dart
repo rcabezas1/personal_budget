@@ -12,6 +12,7 @@ class BudgetMessage {
   String? sms;
   String? category;
   String? description;
+  double? initialValue;
   bool valid = false;
 
   BudgetMessage.valid(this.id,
@@ -21,7 +22,8 @@ class BudgetMessage {
       this.type,
       this.sms,
       this.category,
-      this.description}) {
+      this.description,
+      this.initialValue}) {
     valid = true;
   }
 
@@ -45,7 +47,8 @@ class BudgetMessage {
         'sms': sms ?? "",
         'category': category ?? "",
         'description': description ?? "",
-        'valid': valid
+        'valid': valid,
+        'initialValue': MongoNumberDouble(initialValue ?? value ?? 0),
       };
 
   static BudgetMessage fromJson(Map<String, dynamic> json) =>
@@ -56,6 +59,8 @@ class BudgetMessage {
         description: json['description'] as String? ?? "",
         sms: json['sms'] as String? ?? "",
         value: double.parse('${json['value'] ?? "0"}'),
+        initialValue:
+            double.parse('${json['initialValue'] ?? json['value'] ?? "0"}'),
         date: DateTime.parse(json['date']).toLocal(),
         type: BudgetType.values
             .firstWhere((element) => element.nameType == json['type']),

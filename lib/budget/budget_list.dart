@@ -3,11 +3,13 @@ import 'package:getwidget/getwidget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/budget/budget_message.dart';
 import 'package:personal_budget/budget/add_budget.dart';
+import 'package:personal_budget/layout/layout.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_card.dart';
 import '../charts/budget_charts.dart';
 import '../formats.dart';
+import '../layout/menu_list.dart';
 import '../loaders/screen_loader.dart';
 import '../service/mongo_budget_service.dart';
 import 'budget_provider.dart';
@@ -33,10 +35,9 @@ class _BudgetListState extends State<BudgetList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: GFAppBar(
-        backgroundColor: GFColors.PRIMARY,
-        title: const Text('Lista de Gastos'),
+    return Layout(
+        id: MenuList.budget,
+        title: MenuList.budget.menuTitle,
         actions: [
           GFIconButton(
             onPressed: _showCharts,
@@ -55,18 +56,22 @@ class _BudgetListState extends State<BudgetList> {
             ),
           )
         ],
-      ),
-      body: GFFloatingWidget(
-        showBlurness: showblur,
-        verticalPosition: 80,
-        body: Consumer<BudgetProvider>(
-            builder: (context, provider, child) => RefreshIndicator(
-                onRefresh: _searchMessages,
-                child:
-                    _loading ? const ScreenLoader() : _listBuilder(provider))),
-        child: alertWidget,
-      ),
-    );
+        body: GFFloatingWidget(
+          showBlurness: showblur,
+          verticalPosition: 80,
+          body: Consumer<BudgetProvider>(
+              builder: (context, provider, child) => RefreshIndicator(
+                  onRefresh: _searchMessages,
+                  child: _loading
+                      ? const ScreenLoader()
+                      : _listBuilder(provider))),
+          child: alertWidget,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _addBudgetMessage,
+          backgroundColor: GFColors.PRIMARY,
+          child: const Icon(Icons.add),
+        ));
   }
 
   _listBuilder(BudgetProvider provider) {

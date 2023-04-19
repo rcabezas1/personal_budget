@@ -148,7 +148,7 @@ class CycleCardState extends State<CycleCard> {
     if (context.mounted) {
       BudgetProvider provider =
           Provider.of<BudgetProvider>(context, listen: false);
-      await provider.searchCycles();
+      await provider.searchCycles(true);
       if (widget.input && context.mounted) {
         Navigator.pop(context);
       }

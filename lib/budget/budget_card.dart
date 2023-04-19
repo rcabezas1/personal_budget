@@ -2,13 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:personal_budget/budget/budget_list.dart';
+import 'package:personal_budget/budget/fix_budget.dart';
+import 'package:personal_budget/inputs/text_currency.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
-import 'package:personal_budget/principal.dart';
-
 import 'package:personal_budget/service/mongo_budget_service.dart';
 import 'package:provider/provider.dart';
 
 import '../formats.dart';
+import '../inputs/input_currency.dart';
 import 'budget_message.dart';
 import 'budget_provider.dart';
 import 'budget_type.dart';
@@ -80,6 +82,18 @@ class _BudgetCardState extends State<BudgetCard> {
         text: 'Eliminar',
       ));
     }
+    if (!widget.input && widget.message.type != BudgetType.cash) {
+      widgets.add(GFButton(
+        onPressed: saving ? null : _fixBudgetMessage,
+        color: GFColors.FOCUS,
+        icon: Icon(
+          Icons.double_arrow_rounded,
+          color: saving ? GFColors.LIGHT : GFColors.FOCUS,
+        ),
+        type: GFButtonType.outline2x,
+        text: 'Ajustar',
+      ));
+    }
     return widgets;
   }
 
@@ -87,7 +101,8 @@ class _BudgetCardState extends State<BudgetCard> {
     var category = widget.message.category?.trim().isNotEmpty ?? false;
     var description = widget.message.description?.trim().isNotEmpty ?? false;
     var commerce = widget.message.commerce?.trim().isNotEmpty ?? false;
-    var value = (widget.message.value ?? 0) > 0;
+    var value =
+        widget.message.value != null && (widget.message.value ?? 0) >= 0;
 
     return !saving && (category && description && commerce && value);
   }
@@ -98,6 +113,15 @@ class _BudgetCardState extends State<BudgetCard> {
     setState(() => saving = false);
   }
 
+  _fixBudgetMessage() async {
+    setState(() => saving = true);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FixBudget(budget: widget.message)));
+    setState(() => saving = false);
+  }
+
   _saveBudgetMessage() async {
     setState(() => saving = true);
     await MongoBudgetService().save(widget.message);
@@ -105,7 +129,7 @@ class _BudgetCardState extends State<BudgetCard> {
     if (widget.input && context.mounted) {
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const Principal()),
+          MaterialPageRoute(builder: (context) => const BudgetList()),
           (route) => false);
     } else {
       BudgetProvider provider =
@@ -140,29 +164,25 @@ class _BudgetCardState extends State<BudgetCard> {
   }
 
   _inputValue() {
-    return TextFormField(
-      inputFormatters: [currencyInputTextFormatter],
-      initialValue: _valueInitial(),
-      keyboardType: TextInputType.number,
-      style: const TextStyle(fontSize: GFSize.MEDIUM),
-      decoration: const InputDecoration(
-          hintText: 'Valor', hintStyle: TextStyle(fontSize: GFSize.MEDIUM)),
-      onChanged: _setValue,
+    return InputCurrency(
+      value: widget.message.value,
+      setValue: _setValue,
+      hintText: "Valor",
     );
   }
 
-  _valueInitial() {
-    if (widget.message.value != null) {
-      return currencyInputTextFormatter
-          .format('${widget.message.value!.toInt()}');
-    }
-    return "";
-  }
-
   _textValue() {
-    return Text(
-      '\$${currencyFormat.format(widget.message.value)}',
-      style: const TextStyle(fontSize: GFSize.MEDIUM),
+    final List<Widget> values = [TextCurrency(value: widget.message.value)];
+    if (widget.message.value != widget.message.initialValue) {
+      values.add(TextCurrency(
+        value: widget.message.initialValue,
+        size: 15,
+      ));
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: values,
     );
   }
 
@@ -182,14 +202,9 @@ class _BudgetCardState extends State<BudgetCard> {
     });
   }
 
-  _setValue(String value) {
+  Future<void> _setValue(double? value) async {
     setState(() {
-      if (currencyInputTextFormatter.getUnformattedValue().isNaN) {
-        widget.message.value = null;
-      } else {
-        widget.message.value =
-            currencyInputTextFormatter.getUnformattedValue().toDouble();
-      }
+      widget.message.value = value;
     });
   }
 

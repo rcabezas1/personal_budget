@@ -30,14 +30,17 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetCycles[index];
   }
 
-  Future<void> searchCycles() async {
-    _budgetCycles = await MongoCycleService().findAll();
-    _budgetCycles.sort((one, two) => two.startDate.compareTo(one.startDate));
+  Future<void> searchCycles(bool refresh) async {
+    if (_budgetCycles.isEmpty || refresh) {
+      _budgetCycles = await MongoCycleService().findAll();
+      _budgetCycles.sort((one, two) => two.startDate.compareTo(one.startDate));
+    }
+
     notifyListeners();
   }
 
   Future<void> searchMessages() async {
-    await searchCycles();
+    await searchCycles(false);
 
     _smsMessages = await _query.querySms(
       kinds: [SmsQueryKind.inbox],

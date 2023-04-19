@@ -3,11 +3,13 @@ import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/cycle/add_cycle.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/cycle/cycle_card.dart';
+import 'package:personal_budget/layout/layout.dart';
 import 'package:personal_budget/service/mongo_cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import '../budget/budget_provider.dart';
 import '../formats.dart';
+import '../layout/menu_list.dart';
 import '../loaders/screen_loader.dart';
 
 class CyclesList extends StatefulWidget {
@@ -24,10 +26,9 @@ class _CyclesListState extends State<CyclesList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: GFAppBar(
-        title: const Text('Lista de ciclos'),
-        backgroundColor: GFColors.PRIMARY,
+    return Layout(
+        id: MenuList.cycle,
+        title: MenuList.cycle.menuTitle,
         actions: [
           GFIconButton(
             onPressed: _addCycle,
@@ -38,18 +39,17 @@ class _CyclesListState extends State<CyclesList> {
             ),
           )
         ],
-      ),
-      body: GFFloatingWidget(
-        showBlurness: showblur,
-        verticalPosition: 80,
-        body: Consumer<BudgetProvider>(
-            builder: (context, provider, child) => RefreshIndicator(
-                onRefresh: _searchCycles,
-                child:
-                    _loading ? const ScreenLoader() : _listBuilder(provider))),
-        child: alertWidget,
-      ),
-    );
+        body: GFFloatingWidget(
+          showBlurness: showblur,
+          verticalPosition: 80,
+          body: Consumer<BudgetProvider>(
+              builder: (context, provider, child) => RefreshIndicator(
+                  onRefresh: _searchCycles,
+                  child: _loading
+                      ? const ScreenLoader()
+                      : _listBuilder(provider))),
+          child: alertWidget,
+        ));
   }
 
   _listBuilder(BudgetProvider provider) {
@@ -73,7 +73,7 @@ class _CyclesListState extends State<CyclesList> {
     });
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
-    provider.searchCycles().then((value) => setState(() {
+    provider.searchCycles(true).then((value) => setState(() {
           _loading = false;
         }));
   }
