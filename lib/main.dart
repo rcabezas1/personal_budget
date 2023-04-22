@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:personal_budget/budget/budget_list.dart';
-import 'package:personal_budget/budget/budget_provider.dart';
+import 'package:personal_budget/expenses/expense_list.dart';
+import 'package:personal_budget/providers/budget_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:provider/provider.dart';
@@ -22,7 +22,7 @@ class MainApp extends StatelessWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [Locale('es', 'CO'), Locale('en')],
       restorationScopeId: "personal_budget",
-      home: BudgetList(),
+      home: ExpensesList(),
     );
   }
 }

@@ -12,7 +12,7 @@ class TextCurrency extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      '\$${currencyFormat.format(value)}',
+      '\$${value != null ? currencyFormat.format(value) : ""}',
       style: TextStyle(fontSize: size ?? GFSize.MEDIUM),
     );
   }

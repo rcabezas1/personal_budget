@@ -2,11 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 
-import 'package:personal_budget/budget/budget_provider.dart';
+import 'package:personal_budget/providers/budget_provider.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
-import 'package:personal_budget/service/mongo_budget_service.dart';
-import 'package:personal_budget/service/mongo_cycle_service.dart';
+import 'package:personal_budget/service/expense_service.dart';
+import 'package:personal_budget/service/cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import '../formats.dart';
@@ -143,7 +143,7 @@ class CycleCardState extends State<CycleCard> {
 
   _saveBudgetCycle() async {
     setState(() => saving = true);
-    widget.cycle.mongoId = await MongoCycleService().save(widget.cycle);
+    widget.cycle.mongoId = await CycleService().save(widget.cycle);
     setState(() => saving = false);
     if (context.mounted) {
       BudgetProvider provider =
@@ -157,7 +157,7 @@ class CycleCardState extends State<CycleCard> {
 
   _processCycle() async {
     setState(() => saving = true);
-    await MongoBudgetService().updateCycle(widget.cycle);
+    await ExpenseService().updateCycle(widget.cycle);
     setState(() => saving = false);
   }
 

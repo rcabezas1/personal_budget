@@ -4,13 +4,13 @@ import 'package:personal_budget/cycle/add_cycle.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/cycle/cycle_card.dart';
 import 'package:personal_budget/layout/layout.dart';
-import 'package:personal_budget/service/mongo_cycle_service.dart';
+import 'package:personal_budget/service/cycle_service.dart';
 import 'package:provider/provider.dart';
 
-import '../budget/budget_provider.dart';
 import '../formats.dart';
 import '../layout/menu_list.dart';
 import '../loaders/screen_loader.dart';
+import '../providers/budget_provider.dart';
 
 class CyclesList extends StatefulWidget {
   const CyclesList({Key? key}) : super(key: key);
@@ -119,9 +119,7 @@ class _CyclesListState extends State<CyclesList> {
   }
 
   _doDelete(BudgetCycle message) async {
-    await MongoCycleService()
-        .delete(message.id)
-        .then((value) => _searchCycles());
+    await CycleService().delete(message.id).then((value) => _searchCycles());
     setState(() {
       alertWidget = null;
       showblur = false;

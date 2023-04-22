@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:personal_budget/sms/sms_parts.dart';
 
-import '../budget/budget_message.dart';
+import '../expenses/expense.dart';
 import 'sms_templates.dart';
 
 class SmsBudgetBuilder {
-  static BudgetMessage fromSMS(int? id, String body) {
+  static Expense fromSMS(int? id, String body) {
     SmsTypeTemplate? budgetTemplate = _getMessageType(body);
     var valid = budgetTemplate != null;
     if (valid) {
-      BudgetMessage budget = BudgetMessage.valid('sms$id');
+      Expense budget = Expense.valid('sms$id');
       budget.type = budgetTemplate.type;
       _getSmsParts(body, budgetTemplate).forEach((part) {
         switch (part.type) {
@@ -23,13 +23,14 @@ class SmsBudgetBuilder {
             break;
           case PartType.value:
             budget.value = double.parse(part.value.replaceAll(',', ""));
+            budget.initialValue = budget.value;
             break;
           default:
         }
       });
       return budget;
     }
-    return BudgetMessage.invalid("");
+    return Expense.invalid("");
   }
 
   static SmsTypeTemplate? _getMessageType(String body) {

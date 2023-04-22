@@ -44,7 +44,7 @@ class Layout extends StatelessWidget {
                   subTitleText: 'Controla tus gastos',
                   listItemTextColor: GFColors.LIGHT,
                 )),
-            MenuOption(option: MenuList.budget, selectedId: id),
+            MenuOption(option: MenuList.expense, selectedId: id),
             MenuOption(option: MenuList.cycle, selectedId: id),
             MenuOption(option: MenuList.charts, selectedId: id),
           ],
