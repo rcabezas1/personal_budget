@@ -10,11 +10,13 @@ class InputCurrency extends StatelessWidget {
       required this.value,
       required this.setValue,
       required this.hintText,
-      this.size})
+      this.size,
+      this.onTap})
       : super(key: key);
 
   final double? value;
   final AsyncValueSetter<double?> setValue;
+  final AsyncCallback? onTap;
   final String? hintText;
   final double? size;
 
@@ -24,6 +26,7 @@ class InputCurrency extends StatelessWidget {
       inputFormatters: [currencyInputTextFormatter],
       initialValue: _valueInitial(),
       keyboardType: TextInputType.number,
+      onTap: onTap,
       style: TextStyle(fontSize: size ?? GFSize.MEDIUM),
       decoration: InputDecoration(
           hintText: hintText,
