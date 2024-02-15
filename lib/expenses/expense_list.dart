@@ -4,6 +4,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/expenses/expense.dart';
 import 'package:personal_budget/expenses/add_expense.dart';
 import 'package:personal_budget/layout/layout.dart';
+import 'package:personal_budget/plan/plan_cycle.dart';
+import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import 'expense_card.dart';
@@ -29,7 +31,7 @@ class _ExpensesListState extends State<ExpensesList> {
 
   @override
   void initState() {
-    _searchMessages();
+    _searchProviderMessages();
     super.initState();
   }
 
@@ -61,7 +63,7 @@ class _ExpensesListState extends State<ExpensesList> {
           verticalPosition: 80,
           body: Consumer<BudgetProvider>(
               builder: (context, provider, child) => RefreshIndicator(
-                  onRefresh: _searchMessages,
+                  onRefresh: _searchProviderMessages,
                   child: _loading
                       ? const ScreenLoader()
                       : _listBuilder(provider))),
@@ -81,12 +83,22 @@ class _ExpensesListState extends State<ExpensesList> {
       itemBuilder: (BuildContext context, int i) {
         var message = provider.getMessage(i);
         return ExpenseCard(
-          expense: message,
-          input: false,
-          delete: _deleteExpense,
-        );
+            expense: message,
+            input: false,
+            delete: _deleteExpense,
+            update: _updateExpense);
       },
     );
+  }
+
+  Future<void> _updateExpense(Expense newExpense) async {
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    setState(() {
+      PlanCycleService().updateActualState(
+          newExpense, provider.getExpenses(), provider.getPlanCycle());
+      provider.searchPlanCycle(true);
+    });
   }
 
   Future<void> _deleteExpense(Expense message) async {
@@ -133,7 +145,7 @@ class _ExpensesListState extends State<ExpensesList> {
   }
 
   Future<void> _updateCard(Expense newMessage) async {
-    await _searchMessages();
+    await _searchProviderMessages();
   }
 
   _addExpense() {
@@ -150,19 +162,27 @@ class _ExpensesListState extends State<ExpensesList> {
     );
   }
 
-  Future<void> _searchMessages() async {
+  Future<void> _searchProviderMessages() async {
     setState(() {
       _loading = true;
     });
-    var permission = await Permission.sms.status;
-    if (permission.isGranted && context.mounted) {
-      BudgetProvider provider =
-          Provider.of<BudgetProvider>(context, listen: false);
-      provider.searchMessages().then((value) => setState(() {
-            _loading = false;
-          }));
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    if (provider.smsAvailable) {
+      var permission = await Permission.sms.status;
+      if (permission.isGranted && context.mounted) {
+        _searchProvider(provider);
+      } else {
+        await Permission.sms.request();
+      }
     } else {
-      await Permission.sms.request();
+      _searchProvider(provider);
     }
+  }
+
+  _searchProvider(BudgetProvider provider) {
+    provider.searchMessages().then((value) => setState(() {
+          _loading = false;
+        }));
   }
 }

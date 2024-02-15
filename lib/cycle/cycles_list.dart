@@ -61,7 +61,9 @@ class _CyclesListState extends State<CyclesList> {
         return CycleCard(
           cycle: message,
           input: false,
+          plan: provider.getPlan(),
           delete: _delete,
+          update: _update,
         );
       },
     );
@@ -124,5 +126,13 @@ class _CyclesListState extends State<CyclesList> {
       alertWidget = null;
       showblur = false;
     });
+  }
+
+  Future<void> _update(BudgetCycle message) async {
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    provider.searchPlanCycle(true).then((value) => setState(() {
+          _loading = false;
+        }));
   }
 }

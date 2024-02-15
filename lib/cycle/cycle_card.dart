@@ -1,24 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:personal_budget/plan/plan.dart';
+import 'package:personal_budget/plan/plan_cycle.dart';
 
 import 'package:personal_budget/providers/budget_provider.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/cycle_service.dart';
+import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../formats.dart';
 
 class CycleCard extends StatefulWidget {
   const CycleCard(
-      {Key? key, required this.cycle, required this.input, this.delete})
+      {Key? key,
+      required this.cycle,
+      required this.input,
+      required this.plan,
+      this.delete,
+      this.update})
       : super(key: key);
 
   final BudgetCycle cycle;
   final bool input;
+  final List<Plan> plan;
   final AsyncValueSetter<BudgetCycle>? delete;
+  final AsyncValueSetter<BudgetCycle>? update;
 
   @override
   CycleCardState createState() => CycleCardState();
@@ -123,6 +134,17 @@ class CycleCardState extends State<CycleCard> {
       ));
 
       buttons.add(GFButton(
+        onPressed: _validToSave() ? _createPlan : null,
+        color: _validToSave() ? GFColors.INFO : GFColors.LIGHT,
+        text: 'Crear Plan',
+        icon: Icon(
+          Icons.place,
+          color: _validToSave() ? GFColors.INFO : GFColors.LIGHT,
+        ),
+        type: GFButtonType.outline2x,
+      ));
+
+      buttons.add(GFButton(
         onPressed: _validToSave() ? _delete : null,
         color: _validToSave() ? GFColors.DANGER : GFColors.LIGHT,
         text: 'Eliminar',
@@ -164,6 +186,23 @@ class CycleCardState extends State<CycleCard> {
   _delete() async {
     setState(() => saving = true);
     await widget.delete!(widget.cycle);
+    setState(() => saving = false);
+  }
+
+  _createPlan() async {
+    setState(() => saving = true);
+    for (var plan in widget.plan) {
+      await PlanCycleService().save(PlanCycle(
+          expenses: [],
+          clasification: plan.clasification,
+          category: plan.category,
+          initialValue: plan.value,
+          cycleId: widget.cycle.id,
+          planId: plan.id,
+          valid: widget.cycle.enabled));
+    }
+    await widget.update!(widget.cycle);
+
     setState(() => saving = false);
   }
 }

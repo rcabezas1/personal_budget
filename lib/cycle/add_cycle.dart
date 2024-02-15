@@ -26,6 +26,7 @@ class _AddCyclesState extends State<AddCycles> {
             child: CycleCard(
               cycle: BudgetCycle(
                   const Uuid().v4(), "", DateTime.now(), DateTime.now(), false),
+              plan: [],
               input: true,
             )));
   }

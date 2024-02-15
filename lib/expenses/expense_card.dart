@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
@@ -6,7 +7,9 @@ import 'package:personal_budget/expenses/expense_list.dart';
 import 'package:personal_budget/expenses/fix_expense.dart';
 import 'package:personal_budget/inputs/text_currency.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
+import 'package:personal_budget/plan/plan_cycle.dart';
 import 'package:personal_budget/service/expense_service.dart';
+import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import '../formats.dart';
@@ -17,11 +20,16 @@ import 'expense_type.dart';
 
 class ExpenseCard extends StatefulWidget {
   const ExpenseCard(
-      {super.key, required this.expense, required this.input, this.delete});
+      {super.key,
+      required this.expense,
+      required this.input,
+      this.delete,
+      this.update});
 
   final Expense expense;
   final bool input;
   final AsyncValueSetter<Expense>? delete;
+  final AsyncValueSetter<Expense>? update;
 
   @override
   State<ExpenseCard> createState() => _ExpenseCardState();
@@ -37,6 +45,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   bool showblur = false;
   Widget? alertWidget;
+  PlanCycle? selectedPlan;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +59,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_inputDescription(), _inputCategory()],
+          children: [_inputDescription(), _inputCategory(), _inputPlan()],
         ),
         buttonBar: GFButtonBar(
             runAlignment: WrapAlignment.end,
@@ -124,18 +133,19 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   _saveExpense() async {
     setState(() => saving = true);
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
     await ExpenseService().save(widget.expense);
-
+    await widget.update!(widget.expense);
     if (widget.input && context.mounted) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const ExpensesList()),
           (route) => false);
     } else {
-      BudgetProvider provider =
-          Provider.of<BudgetProvider>(context, listen: false);
       provider.updateList();
     }
+
     setState(() => saving = false);
   }
 
@@ -161,6 +171,41 @@ class _ExpenseCardState extends State<ExpenseCard> {
       initialValue: widget.expense.category,
       onChanged: _setCategory,
     );
+  }
+
+  _inputPlan() {
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    return DropdownSearch<PlanCycle>(
+      itemAsString: _itemStringValue,
+      items: provider.getPlanCycle(),
+      compareFn: _compartePlan,
+      filterFn: _itemFilter,
+      selectedItem: provider.getPlanCycle().firstWhere(
+            (element) => element.id == widget.expense.plan,
+            orElse: () => PlanCycle(expenses: []),
+          ),
+      popupProps: const PopupProps.dialog(showSearchBox: true),
+      onChanged: _setPlan,
+    );
+  }
+
+  String _itemStringValue(PlanCycle plan) {
+    if (plan.id != null) {
+      return '${plan.category!} - Gastado: \$${plan.actualValue ?? ''}';
+    }
+    return "";
+  }
+
+  bool _compartePlan(PlanCycle? item1, PlanCycle? item2) {
+    if (item1 != null && item2 != null) {
+      return item1.category!.compareTo(item2.category!) > 0;
+    }
+    return false;
+  }
+
+  bool _itemFilter(PlanCycle plan, String filter) {
+    return plan.category!.toLowerCase().contains(filter.toLowerCase());
   }
 
   _inputValue() {
@@ -208,9 +253,18 @@ class _ExpenseCardState extends State<ExpenseCard> {
     });
   }
 
-  _setCategory(String category) {
+  void _setCategory(String category) {
     setState(() {
       widget.expense.category = category.trim();
+    });
+  }
+
+  void _setPlan(PlanCycle? newPlan) {
+    setState(() {
+      if (newPlan != null) {
+        selectedPlan = newPlan;
+        widget.expense.plan = newPlan.id;
+      }
     });
   }
 

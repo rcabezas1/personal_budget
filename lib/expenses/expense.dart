@@ -11,6 +11,7 @@ class Expense {
   ExpenseType? type;
   String? sms;
   String? category;
+  String? plan;
   String? description;
   double? initialValue;
   bool valid = false;
@@ -22,6 +23,7 @@ class Expense {
       this.type,
       this.sms,
       this.category,
+      this.plan,
       this.description,
       this.initialValue}) {
     valid = true;
@@ -46,6 +48,7 @@ class Expense {
         'type': type?.nameType ?? "",
         'sms': sms ?? "",
         'category': category ?? "",
+        'plan': plan ?? "",
         'description': description ?? "",
         'valid': valid,
         'initialValue': MongoNumberDouble(initialValue ?? value ?? 0),
@@ -55,6 +58,7 @@ class Expense {
         json['id'] as String? ?? "",
         commerce: json['commerce'] as String? ?? "",
         category: json['category'] as String? ?? "",
+        plan: json['plan'] as String? ?? "",
         description: json['description'] as String? ?? "",
         sms: json['sms'] as String? ?? "",
         value: double.parse('${json['value'] ?? "0"}'),

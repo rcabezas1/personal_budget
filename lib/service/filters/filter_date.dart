@@ -7,7 +7,7 @@ class FilterDate implements MongoFilter {
   String field;
   FilterDate(this.startDate, this.endDate, this.field);
   Map<String, dynamic> toJson() => <String, dynamic>{
-        field: FilterDateBetween(startDate, endDate, "gte", "lte"),
+        field: FilterDateBetween(startDate, endDate, "gte", "lt"),
       };
 }
 

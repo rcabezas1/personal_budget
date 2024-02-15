@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
+import 'package:personal_budget/plan/plan.dart';
 import 'package:personal_budget/service/expense_service.dart';
+import 'package:personal_budget/service/plan_service.dart';
 
 import '../cycle/budget_cycle.dart';
 import '../expenses/expense.dart';
+import '../plan/plan_cycle.dart';
 import '../service/cycle_service.dart';
+import '../service/plan_cycle_service.dart';
 import '../sms/sms_budget_builder.dart';
 
 class BudgetProvider extends ChangeNotifier {
@@ -13,6 +18,10 @@ class BudgetProvider extends ChangeNotifier {
   final List<Expense> _budgetExpenses = [];
   List<Expense> _storedBudgetMessages = [];
   List<BudgetCycle> _budgetCycles = [];
+  List<Plan> _plan = [];
+  List<PlanCycle> _planCycle = [];
+
+  bool smsAvailable = false;
 
   int get countCycles {
     return _budgetCycles.length;
@@ -26,6 +35,20 @@ class BudgetProvider extends ChangeNotifier {
     if (_budgetCycles.isEmpty || refresh) {
       _budgetCycles = await CycleService().findAll();
       _budgetCycles.sort((one, two) => two.startDate.compareTo(one.startDate));
+    }
+  }
+
+  Future<void> searchPlan(bool refresh) async {
+    if (_plan.isEmpty || refresh) {
+      _plan = await PlanService().findAll();
+      _plan.sort((one, two) => two.category!.compareTo(one.category!));
+    }
+  }
+
+  Future<void> searchPlanCycle(bool refresh) async {
+    if (_plan.isEmpty || refresh) {
+      _planCycle = await PlanCycleService().findAll();
+      _planCycle.sort((one, two) => two.category!.compareTo(one.category!));
     }
   }
 
@@ -47,13 +70,25 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetExpenses[index];
   }
 
+  List<Expense> getExpenses() {
+    return _budgetExpenses;
+  }
+
   Future<void> searchMessages() async {
     await searchCycles(false);
-    _smsMessages = await _query.querySms(
-      kinds: [SmsQueryKind.inbox],
-      address: '87705',
-      count: 100,
-    );
+    if (smsAvailable) {
+      String addresses = dotenv.get("SMS_ADDRESS");
+      if (addresses.isNotEmpty) {
+        _smsMessages = [];
+        for (var address in addresses.split(",")) {
+          _smsMessages.addAll(await _query.querySms(
+            kinds: [SmsQueryKind.inbox],
+            address: address,
+            count: int.parse(dotenv.get("SMS_COUNT", fallback: "100")),
+          ));
+        }
+      }
+    }
     _storedBudgetMessages = await ExpenseService().findAllValid();
     _processMessages();
 
@@ -99,5 +134,13 @@ class BudgetProvider extends ChangeNotifier {
         _budgetExpenses.add(element);
       }
     }
+  }
+
+  List<Plan> getPlan() {
+    return _plan;
+  }
+
+  List<PlanCycle> getPlanCycle() {
+    return _planCycle;
   }
 }

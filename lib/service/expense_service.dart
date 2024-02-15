@@ -10,7 +10,7 @@ import 'dart:convert';
 
 import '../expenses/expense.dart';
 
-final expenseCollection = dotenv.get("BUDGET_COLLECTION");
+final collection = dotenv.get("BUDGET_COLLECTION");
 
 class ExpenseService {
   Future<void> save(Expense message) async {
@@ -21,7 +21,7 @@ class ExpenseService {
       var client = MongoClient();
 
       var mongoBody =
-          MongoRequest.upsert(expenseCollection, FilterId(message.id), message);
+          MongoRequest.upsert(collection, FilterId(message.id), message);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -44,7 +44,7 @@ class ExpenseService {
       var client = MongoClient();
 
       var mongoBody = MongoRequest.updateAll(
-          expenseCollection,
+          collection,
           FilterDate(cycle.startDate, cycle.endDate, "date"),
           BudgetCycleUpdate(cycle.mongoId ?? '', cycle.enabled));
       String body = jsonEncode(mongoBody.toJson());
@@ -68,7 +68,7 @@ class ExpenseService {
 
       Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.delete(expenseCollection, FilterId(id));
+      var mongoBody = MongoRequest.delete(collection, FilterId(id));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -88,11 +88,11 @@ class ExpenseService {
   Future<List<Expense>> findAllValid() async {
     List<Expense> data = [];
     try {
-      var url = "$mongoService/find";
+      var url = "$mongoApiPath/find";
 
-      Uri uri = Uri.parse(url);
+      Uri uri = Uri.https(mongoApi, url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(expenseCollection);
+      var mongoBody = MongoRequest.filter(collection);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {

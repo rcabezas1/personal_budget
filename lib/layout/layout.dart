@@ -25,6 +25,7 @@ class Layout extends StatelessWidget {
     return Scaffold(
       appBar: GFAppBar(
         backgroundColor: GFColors.PRIMARY,
+        searchBar: true,
         title: Text(title),
         actions: actions,
       ),
