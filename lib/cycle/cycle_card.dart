@@ -11,7 +11,6 @@ import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/cycle_service.dart';
 import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../formats.dart';
 

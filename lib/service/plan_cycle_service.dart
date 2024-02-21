@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:personal_budget/expenses/expense.dart';
-import 'package:personal_budget/plan/plan.dart';
 import 'package:personal_budget/plan/plan_expense.dart';
 import 'package:personal_budget/service/filters/filter_fields.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
