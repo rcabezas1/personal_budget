@@ -197,6 +197,7 @@ class CycleCardState extends State<CycleCard> {
           clasification: plan.clasification,
           category: plan.category,
           initialValue: plan.value,
+          actualValue: plan.value,
           cycleId: widget.cycle.id,
           planId: plan.id,
           valid: widget.cycle.enabled));

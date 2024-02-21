@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:personal_budget/plan/plan_expense.dart';
 import 'package:personal_budget/service/mongo/mongo_number.dart';
 
 class PlanCycle {
@@ -8,7 +9,7 @@ class PlanCycle {
   String? category;
   String? cycleId;
   String? planId;
-  List<String> expenses;
+  List<PlanExpense> expenses;
   double? initialValue;
   double? actualValue;
 
@@ -48,7 +49,7 @@ class PlanCycle {
         valid: json['valid'] as bool? ?? false,
       );
 
-  static List<String> getExpenses(List<dynamic> json) {
-    return json.map((e) => e.toString()).toList();
+  static List<PlanExpense> getExpenses(List<dynamic> json) {
+    return json.map((e) => PlanExpense.fromJson(e)).toList();
   }
 }

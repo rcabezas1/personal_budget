@@ -192,7 +192,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   String _itemStringValue(PlanCycle plan) {
     if (plan.id != null) {
-      return '${plan.category!} - Gastado: \$${plan.actualValue ?? ''}';
+      return '${plan.category!} - Disponible: \$${currencyFormat.format(plan.actualValue ?? 0)}';
     }
     return "";
   }

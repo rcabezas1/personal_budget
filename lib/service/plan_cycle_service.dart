@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:personal_budget/expenses/expense.dart';
 import 'package:personal_budget/plan/plan.dart';
+import 'package:personal_budget/plan/plan_expense.dart';
 import 'package:personal_budget/service/filters/filter_fields.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
@@ -12,34 +13,32 @@ import '../plan/plan_cycle.dart';
 final collection = dotenv.get("PLAN_CYCLE_COLLECTION");
 
 class PlanCycleService {
-  Future<void> updateActualState(Expense newExpense, List<Expense> expenses,
-      List<PlanCycle> planCycles) async {
-    List<Expense> totalExpense = expenses;
-
-    var existNewExpense =
-        expenses.any((element) => element.id == newExpense.id);
-    if (existNewExpense) {
-      totalExpense.removeWhere((element) => element.id == newExpense.id);
-    }
-    totalExpense.add(newExpense);
-
+  Future<void> updateActualState(
+      Expense newExpense, List<PlanCycle> planCycles) async {
     for (var planCycle in planCycles) {
       var planExpenses = planCycle.expenses;
       bool changed = false;
-      if (planExpenses.any((element) => element == newExpense.id)) {
-        planExpenses.removeWhere((element) => element == newExpense.id);
+      if (planExpenses.any((element) => element.id == newExpense.id)) {
+        planExpenses.removeWhere((element) => element.id == newExpense.id);
         changed = true;
       }
-      if (planCycle.id == newExpense.plan) {
-        planExpenses.add(newExpense.id);
+      if (newExpense.plan == planCycle.id) {
+        var founded = planExpenses.firstWhere(
+          (element) => element.id == newExpense.id,
+          orElse: () => PlanExpense("", 0),
+        );
+        if (founded.id == "") {
+          planExpenses.add(PlanExpense(newExpense.id, newExpense.value ?? 0));
+        } else {
+          founded.value = newExpense.value!;
+        }
         changed = true;
       }
+
       if (changed) {
         planCycle.actualValue = planCycle.initialValue ?? 0;
-        for (var expenseId in planExpenses) {
-          var founded =
-              totalExpense.firstWhere((expense) => expense.id == expenseId);
-          planCycle.actualValue = planCycle.actualValue! - (founded.value ?? 0);
+        for (var planExpense in planExpenses) {
+          planCycle.actualValue = planCycle.actualValue! - planExpense.value;
         }
         planCycle.expenses = planExpenses;
         await save(planCycle);

@@ -95,9 +95,9 @@ class _ExpensesListState extends State<ExpensesList> {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
     setState(() {
-      PlanCycleService().updateActualState(
-          newExpense, provider.getExpenses(), provider.getPlanCycle());
-      provider.searchPlanCycle(true);
+      PlanCycleService()
+          .updateActualState(newExpense, provider.getPlanCycle())
+          .then((value) => provider.searchPlanCycle(true));
     });
   }
 
