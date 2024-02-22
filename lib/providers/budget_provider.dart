@@ -49,6 +49,7 @@ class BudgetProvider extends ChangeNotifier {
     if (_plan.isEmpty || refresh) {
       _planCycle = await PlanCycleService().findAll();
       _planCycle.sort((one, two) => two.category!.compareTo(one.category!));
+      notifyListeners();
     }
   }
 
@@ -141,6 +142,11 @@ class BudgetProvider extends ChangeNotifier {
   }
 
   List<PlanCycle> getPlanCycle() {
+    return _planCycle;
+  }
+
+  Future<List<PlanCycle>> getUpdatedPlanCycle() async {
+    await searchPlanCycle(true);
     return _planCycle;
   }
 }

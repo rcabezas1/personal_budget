@@ -7,6 +7,7 @@ import 'package:personal_budget/layout/layout.dart';
 import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
 
+import '../plan/plan_cycle.dart';
 import 'expense_card.dart';
 import '../charts/budget_charts.dart';
 import '../formats.dart';
@@ -82,25 +83,14 @@ class _ExpensesListState extends State<ExpensesList> {
       itemBuilder: (BuildContext context, int i) {
         var message = provider.getMessage(i);
         return ExpenseCard(
-            expense: message,
-            input: false,
-            delete: _deleteExpense,
-            update: _updateExpense);
+            expense: message, input: false, delete: _deleteExpense);
       },
     );
   }
 
-  Future<void> _updateExpense(Expense newExpense) async {
+  Future<void> _deleteExpense(Expense message) async {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
-    setState(() {
-      PlanCycleService()
-          .updateActualState(newExpense, provider.getPlanCycle())
-          .then((value) => provider.searchPlanCycle(true));
-    });
-  }
-
-  Future<void> _deleteExpense(Expense message) async {
     setState(() {
       showblur = true;
       alertWidget = GFAlert(
@@ -122,7 +112,7 @@ class _ExpensesListState extends State<ExpensesList> {
           const SizedBox(width: 5),
           GFButton(
             onPressed: () {
-              _doDelete(message);
+              _doDelete(message, provider);
             },
             color: GFColors.DANGER,
             shape: GFButtonShape.pills,
@@ -133,10 +123,12 @@ class _ExpensesListState extends State<ExpensesList> {
     });
   }
 
-  _doDelete(Expense message) async {
+  _doDelete(Expense message, BudgetProvider provider) async {
     await ExpenseService()
         .delete(message.id)
         .then((value) => _updateCard(message));
+    await PlanCycleService().deleteExpense(message);
+    await provider.searchPlanCycle(true);
     setState(() {
       alertWidget = null;
       showblur = false;

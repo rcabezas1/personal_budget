@@ -13,22 +13,18 @@ import 'package:provider/provider.dart';
 
 import '../formats.dart';
 import '../inputs/input_currency.dart';
+import '../service/plan_cycle_service.dart';
 import 'expense.dart';
 import '../providers/budget_provider.dart';
 import 'expense_type.dart';
 
 class ExpenseCard extends StatefulWidget {
   const ExpenseCard(
-      {super.key,
-      required this.expense,
-      required this.input,
-      this.delete,
-      this.update});
+      {super.key, required this.expense, required this.input, this.delete});
 
   final Expense expense;
   final bool input;
   final AsyncValueSetter<Expense>? delete;
-  final AsyncValueSetter<Expense>? update;
 
   @override
   State<ExpenseCard> createState() => _ExpenseCardState();
@@ -135,7 +131,8 @@ class _ExpenseCardState extends State<ExpenseCard> {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
     await ExpenseService().save(widget.expense);
-    await widget.update!(widget.expense);
+    await PlanCycleService().updateActualState(widget.expense);
+    await provider.searchPlanCycle(true);
     if (widget.input && context.mounted) {
       Navigator.pushAndRemoveUntil(
           context,
