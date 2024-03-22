@@ -27,6 +27,10 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetCycles.length;
   }
 
+  int get countPlan {
+    return _planCycle.length;
+  }
+
   BudgetCycle getCycles(int index) {
     return _budgetCycles[index];
   }
@@ -48,7 +52,7 @@ class BudgetProvider extends ChangeNotifier {
   Future<void> searchPlanCycle(bool refresh) async {
     if (_plan.isEmpty || refresh) {
       _planCycle = await PlanCycleService().findAll();
-      _planCycle.sort((one, two) => two.category!.compareTo(one.category!));
+      _planCycle.sort((one, two) => one.category!.compareTo(two.category!));
       notifyListeners();
     }
   }
@@ -143,6 +147,10 @@ class BudgetProvider extends ChangeNotifier {
 
   List<PlanCycle> getPlanCycle() {
     return _planCycle;
+  }
+
+  PlanCycle getPlanCycleItem(int index) {
+    return _planCycle[index];
   }
 
   Future<List<PlanCycle>> getUpdatedPlanCycle() async {

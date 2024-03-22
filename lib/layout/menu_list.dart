@@ -1,4 +1,4 @@
-enum MenuList { expense, cycle, charts }
+enum MenuList { expense, cycle, charts, plan }
 
 extension MenuListExtension on MenuList {
   String get menuTitle {
@@ -11,6 +11,10 @@ extension MenuListExtension on MenuList {
 
       case MenuList.cycle:
         return 'Ciclos';
+
+      case MenuList.plan:
+        return 'Plan';
+
       default:
         return '';
     }

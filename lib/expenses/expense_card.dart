@@ -54,7 +54,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_inputDescription(), _inputCategory(), _inputPlan()],
+          children: [_inputDescription(), _inputPlan()],
         ),
         buttonBar: GFButtonBar(
             runAlignment: WrapAlignment.end,
@@ -102,6 +102,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
   }
 
   _validToSave() {
+    widget.expense.category = selectedPlan?.category ?? "";
     var category = widget.expense.category?.trim().isNotEmpty ?? false;
     var description = widget.expense.description?.trim().isNotEmpty ?? false;
     var commerce = widget.expense.commerce?.trim().isNotEmpty ?? false;
@@ -159,16 +160,6 @@ class _ExpenseCardState extends State<ExpenseCard> {
     return Text(widget.expense.commerce ?? "");
   }
 
-  _inputCategory() {
-    return TextFormField(
-      decoration: const InputDecoration(
-        hintText: 'Categoria',
-      ),
-      initialValue: widget.expense.category,
-      onChanged: _setCategory,
-    );
-  }
-
   _inputPlan() {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
@@ -201,7 +192,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
   }
 
   bool _itemFilter(PlanCycle plan, String filter) {
-    return plan.category!.toLowerCase().contains(filter.toLowerCase());
+    return plan.category!.toLowerCase().contains(filter.toLowerCase().trim());
   }
 
   _inputValue() {
@@ -246,12 +237,6 @@ class _ExpenseCardState extends State<ExpenseCard> {
   Future<void> _setValue(double? value) async {
     setState(() {
       widget.expense.value = value;
-    });
-  }
-
-  void _setCategory(String category) {
-    setState(() {
-      widget.expense.category = category.trim();
     });
   }
 

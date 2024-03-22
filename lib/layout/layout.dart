@@ -48,6 +48,7 @@ class Layout extends StatelessWidget {
             MenuOption(option: MenuList.expense, selectedId: id),
             MenuOption(option: MenuList.cycle, selectedId: id),
             MenuOption(option: MenuList.charts, selectedId: id),
+            MenuOption(option: MenuList.plan, selectedId: id),
           ],
         ),
       ),

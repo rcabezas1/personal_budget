@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
+import 'package:personal_budget/plan/plan_cycle_list.dart';
 
 import '../expenses/expense_list.dart';
 import '../charts/budget_charts.dart';
@@ -40,6 +41,8 @@ class MenuOption extends StatelessWidget {
         return const CyclesList();
       case MenuList.charts:
         return const BudgetCharts();
+      case MenuList.plan:
+        return const PlanCycleList();
       default:
         return const ExpensesList();
     }
