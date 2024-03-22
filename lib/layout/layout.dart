@@ -11,7 +11,9 @@ class Layout extends StatelessWidget {
       required this.title,
       this.actions,
       required this.body,
-      this.floatingActionButton})
+      this.floatingActionButton,
+      this.searchBar,
+      this.searchController})
       : super(key: key);
 
   final MenuList id;
@@ -19,13 +21,17 @@ class Layout extends StatelessWidget {
   final List<Widget>? actions;
   final String title;
   final Widget? floatingActionButton;
+  final bool? searchBar;
+  final TextEditingController? searchController;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: GFAppBar(
         backgroundColor: GFColors.PRIMARY,
-        searchBar: true,
+        searchBar: searchBar ?? false,
+        searchHintText: "Buscar",
+        searchController: searchController,
         title: Text(title),
         actions: actions,
       ),

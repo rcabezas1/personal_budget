@@ -19,12 +19,27 @@ class _PlanCycleListState extends State<PlanCycleList> {
   bool showblur = false;
   bool _loading = false;
   Widget? alertWidget;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    _searchController.addListener(_performSearch);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Layout(
         id: MenuList.plan,
         title: MenuList.plan.menuTitle,
+        searchBar: true,
+        searchController: _searchController,
         body: GFFloatingWidget(
           showBlurness: showblur,
           verticalPosition: 80,
@@ -58,5 +73,21 @@ class _PlanCycleListState extends State<PlanCycleList> {
     provider.searchCycles(true).then((value) => setState(() {
           _loading = false;
         }));
+  }
+
+  Future<void> _performSearch() async {
+    setState(() {
+      _loading = true;
+    });
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    setState(() {
+      if (_searchController.text.isEmpty) {
+        provider.defaultSortPlanCycle();
+      } else {
+        provider.sortPlanCycles(_searchController.text.toLowerCase());
+      }
+      _loading = false;
+    });
   }
 }

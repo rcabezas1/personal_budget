@@ -52,9 +52,13 @@ class BudgetProvider extends ChangeNotifier {
   Future<void> searchPlanCycle(bool refresh) async {
     if (_plan.isEmpty || refresh) {
       _planCycle = await PlanCycleService().findAll();
-      _planCycle.sort((one, two) => one.category!.compareTo(two.category!));
+      defaultSortPlanCycle();
       notifyListeners();
     }
+  }
+
+  defaultSortPlanCycle() {
+    _planCycle.sort((one, two) => one.category!.compareTo(two.category!));
   }
 
   bool _validExpenseCycle(Expense expense) {
@@ -71,7 +75,7 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetExpenses.length;
   }
 
-  Expense getMessage(int index) {
+  Expense getExpense(int index) {
     return _budgetExpenses[index];
   }
 
@@ -79,7 +83,7 @@ class BudgetProvider extends ChangeNotifier {
     return _budgetExpenses;
   }
 
-  Future<void> searchMessages() async {
+  Future<void> searchExpenses() async {
     await searchCycles(false);
     if (smsAvailable) {
       String addresses = dotenv.get("SMS_ADDRESS");
@@ -95,9 +99,7 @@ class BudgetProvider extends ChangeNotifier {
       }
     }
     _storedBudgetMessages = await ExpenseService().findAllValid();
-    _processMessages();
-
-    debugPrint('Messages: ${_budgetExpenses.length}');
+    _processExpenses();
     notifyListeners();
   }
 
@@ -106,7 +108,7 @@ class BudgetProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  _processMessages() {
+  _processExpenses() {
     _budgetExpenses.clear();
 
     if (_smsMessages.isNotEmpty) {
@@ -115,7 +117,34 @@ class BudgetProvider extends ChangeNotifier {
     } else {
       _budgetExpenses.addAll(_storedBudgetMessages);
     }
+    defaultSortExpenses();
+  }
+
+  defaultSortExpenses() {
     _budgetExpenses.sort((one, two) => two.date!.compareTo(one.date!));
+  }
+
+  sortExpensesSearch(String search) {
+    _budgetExpenses.sort((one, two) => _sortString(
+        one.description?.toLowerCase() ?? "",
+        two.description?.toLowerCase() ?? "",
+        search.toLowerCase().trim()));
+  }
+
+  sortPlanCycles(String search) {
+    _planCycle.sort((one, two) => _sortString(one.category?.toLowerCase() ?? "",
+        two.category?.toLowerCase() ?? "", search.toLowerCase().trim()));
+  }
+
+  _sortString(String one, String two, String search) {
+    if (one.contains(search) && two.contains(search)) {
+      return 0;
+    } else if (one.contains(search)) {
+      return -1;
+    } else if (two.contains(search)) {
+      return 1;
+    }
+    return 0;
   }
 
   _addNonSms() {

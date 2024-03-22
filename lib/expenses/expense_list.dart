@@ -7,7 +7,6 @@ import 'package:personal_budget/layout/layout.dart';
 import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
 
-import '../plan/plan_cycle.dart';
 import 'expense_card.dart';
 import '../charts/budget_charts.dart';
 import '../formats.dart';
@@ -28,11 +27,19 @@ class _ExpensesListState extends State<ExpensesList> {
 
   Widget? alertWidget;
   bool showblur = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     _searchProviderMessages();
+    _searchController.addListener(_performSearch);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,6 +47,8 @@ class _ExpensesListState extends State<ExpensesList> {
     return Layout(
         id: MenuList.expense,
         title: MenuList.expense.menuTitle,
+        searchBar: true,
+        searchController: _searchController,
         actions: [
           GFIconButton(
             onPressed: _showCharts,
@@ -81,7 +90,7 @@ class _ExpensesListState extends State<ExpensesList> {
       shrinkWrap: true,
       itemCount: provider.countMessage,
       itemBuilder: (BuildContext context, int i) {
-        var message = provider.getMessage(i);
+        var message = provider.getExpense(i);
         return ExpenseCard(
             expense: message, input: false, delete: _deleteExpense);
       },
@@ -172,8 +181,25 @@ class _ExpensesListState extends State<ExpensesList> {
   }
 
   _searchProvider(BudgetProvider provider) {
-    provider.searchMessages().then((value) => setState(() {
+    provider.searchExpenses().then((value) => setState(() {
           _loading = false;
         }));
+  }
+
+  Future<void> _performSearch() async {
+    setState(() {
+      _loading = true;
+    });
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+
+    setState(() {
+      if (_searchController.text.isEmpty) {
+        provider.defaultSortExpenses();
+      } else {
+        provider.sortExpensesSearch(_searchController.text.toLowerCase());
+      }
+      _loading = false;
+    });
   }
 }
