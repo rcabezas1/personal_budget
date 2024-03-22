@@ -44,6 +44,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   @override
   Widget build(BuildContext context) {
+    _initSelectedProvider();
     return GFCard(
         title: GFListTile(
           avatar: AvatarLoader(
@@ -61,6 +62,15 @@ class _ExpenseCardState extends State<ExpenseCard> {
             alignment: WrapAlignment.end,
             crossAxisAlignment: WrapCrossAlignment.end,
             children: _buttons()));
+  }
+
+  _initSelectedProvider() {
+    BudgetProvider provider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    selectedPlan = provider.getPlanCycle().firstWhere(
+          (element) => element.id == widget.expense.plan,
+          orElse: () => PlanCycle(expenses: []),
+        );
   }
 
   List<Widget> _buttons() {
@@ -168,10 +178,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
       items: provider.getPlanCycle(),
       compareFn: _compartePlan,
       filterFn: _itemFilter,
-      selectedItem: provider.getPlanCycle().firstWhere(
-            (element) => element.id == widget.expense.plan,
-            orElse: () => PlanCycle(expenses: []),
-          ),
+      selectedItem: selectedPlan,
       popupProps: const PopupProps.dialog(showSearchBox: true),
       onChanged: _setPlan,
     );
