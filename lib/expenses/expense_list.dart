@@ -88,6 +88,7 @@ class _ExpensesListState extends State<ExpensesList> {
   _listBuilder(BudgetProvider provider) {
     return ListView.builder(
       shrinkWrap: true,
+      restorationId: "items",
       itemCount: provider.countMessage,
       itemBuilder: (BuildContext context, int i) {
         var message = provider.getExpense(i);
@@ -192,7 +193,8 @@ class _ExpensesListState extends State<ExpensesList> {
     });
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
-
+    //Necesario por errores de text input form
+    await Future.delayed(const Duration(milliseconds: 300));
     setState(() {
       if (_searchController.text.isEmpty) {
         provider.defaultSortExpenses();
