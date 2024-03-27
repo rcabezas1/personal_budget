@@ -1,8 +1,11 @@
-enum MenuList { expense, cycle, charts, plan }
+enum MenuList { login, expense, cycle, charts, plan }
 
 extension MenuListExtension on MenuList {
   String get menuTitle {
     switch (this) {
+      case MenuList.login:
+        return 'Sesion';
+
       case MenuList.expense:
         return 'Lista de gastos';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:personal_budget/plan/plan_cycle_list.dart';
+import 'package:personal_budget/user/login_view.dart';
 
 import '../expenses/expense_list.dart';
 import '../charts/budget_charts.dart';
@@ -35,6 +36,8 @@ class MenuOption extends StatelessWidget {
 
   _step(MenuList option) {
     switch (option) {
+      case MenuList.login:
+        return const LoginView();
       case MenuList.expense:
         return const ExpensesList();
       case MenuList.cycle:

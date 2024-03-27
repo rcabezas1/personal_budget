@@ -1,17 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:parchemos/src/storage/memory_storage.dart';
-import 'package:parchemos/src/user/user_data.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import '../storage/memory_storage.dart';
+import '../user/user_data.dart';
+import '../user/user_service.dart';
 
-import '../notification/notification_service.dart';
-import 'user_service.dart';
-
-class UserController with ChangeNotifier {
-  UserController(this._userService, this._notificationService);
+class UserProvider with ChangeNotifier {
+  UserProvider(this._userService);
 
   final UserService _userService;
-  final NotificationService _notificationService;
   late ThemeMode _themeMode;
 
   ThemeMode get themeMode => _themeMode;
@@ -40,11 +37,21 @@ class UserController with ChangeNotifier {
   }
 
   Future<UserCredential> signInWithGoogle() async {
-    GoogleAuthProvider googleProvider = GoogleAuthProvider();
-    googleProvider
-        .addScope('https://www.googleapis.com/auth/contacts.readonly');
-    googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
-    return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   checkUserAuthenticated() {
@@ -62,40 +69,15 @@ class UserController with ChangeNotifier {
     });
   }
 
-  listenNewMesages() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      MemoryStorage.instance.notifications = true;
-      notifyListeners();
-    });
-  }
-
-  _updateUserMessage(UserData userData, String? messageToken) {
-    _notificationService.loadNotificationsNotSeen().then((int data) {
-      MemoryStorage.instance.totalNotifications = data;
-      if (data > 0) {
-        MemoryStorage.instance.notifications = true;
-        notifyListeners();
-      }
-    });
-    if (messageToken != null) {
-      userData.messageToken = messageToken;
-      _userService.updateUser(userData);
-    }
+  _updateUserData(UserData value) async {
+    MemoryStorage.instance.userData = value;
+    await loadSettings();
+    MemoryStorage.instance.notifications;
   }
 
   _clearData() {
     MemoryStorage.instance.clearData();
     loadSettings();
-  }
-
-  _updateUserData(UserData value) async {
-    MemoryStorage.instance.userData = value;
-    await loadSettings();
-    MemoryStorage.instance.notifications;
-    await _notificationService
-        .start()
-        .then((messageToken) => _updateUserMessage(value, messageToken));
-    listenNewMesages();
   }
 
   bool isLogged() {
