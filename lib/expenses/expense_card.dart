@@ -212,7 +212,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   _textValue() {
     final List<Widget> values = [TextCurrency(value: widget.expense.value!)];
-    if (widget.expense.value != widget.expense.initialValue) {
+    if (widget.expense.value! != widget.expense.initialValue!) {
       values.add(TextCurrency(
         value: widget.expense.initialValue!,
         size: 15,
@@ -227,6 +227,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   _inputDescription() {
     return TextFormField(
+      restorationId: "desc${widget.expense.id}",
       decoration: const InputDecoration(
         hintText: 'Descripcion',
       ),

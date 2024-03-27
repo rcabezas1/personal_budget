@@ -194,7 +194,7 @@ class _ExpensesListState extends State<ExpensesList> {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
     //Necesario por errores de text input form
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
       if (_searchController.text.isEmpty) {
         provider.defaultSortExpenses();

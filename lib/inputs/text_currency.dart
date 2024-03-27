@@ -15,7 +15,6 @@ class TextCurrency extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      restorationId: "currencyForm",
       initialValue: '\$${currencyFormat.format(value)}',
       onTap: onTap,
       style: TextStyle(fontSize: size ?? GFSize.MEDIUM),

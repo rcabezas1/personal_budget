@@ -48,7 +48,7 @@ class Layout extends StatelessWidget {
                 ),
                 child: GFListTile(
                   titleText: 'Personal Budget',
-                  subTitleText: 'Controla tus gastos',
+                  subTitleText: 'Presupuesto Gastos',
                   listItemTextColor: GFColors.LIGHT,
                 )),
             MenuOption(option: MenuList.expense, selectedId: id),
