@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1075452885509-5u2gap3idonm0nvqdbf52ra9rbthamhd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rcabezas1.personal_budget",
+            "certificate_hash": "41292f94fb6d5923c7421438e4dd8fa1e70ce5b4"
+          }
+        },
+        {
           "client_id": "1075452885509-67d7gs24hekaaj0r1p2cnetnk4lo4dt2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
