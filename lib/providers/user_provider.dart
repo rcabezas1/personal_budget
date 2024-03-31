@@ -54,6 +54,11 @@ class UserProvider with ChangeNotifier {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+  Future<void> signout() async {
+    FirebaseAuth.instance.signOut();
+    notifyListeners();
+  }
+
   checkUserAuthenticated() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {

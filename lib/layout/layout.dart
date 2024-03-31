@@ -28,8 +28,6 @@ class Layout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {}
     return Scaffold(
       appBar: GFAppBar(
         backgroundColor: GFColors.PRIMARY,
@@ -44,12 +42,11 @@ class Layout extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             GFDrawerHeader(
-                decoration: BoxDecoration(color: GFColors.PRIMARY),
+                decoration: const BoxDecoration(color: GFColors.PRIMARY),
                 centerAlign: true,
                 currentAccountPicture: GFAvatar(
                   backgroundColor: GFColors.FOCUS,
-                  backgroundImage: NetworkImage(
-                      FirebaseAuth.instance.currentUser?.photoURL ?? ''),
+                  backgroundImage: _getBackGroundImage(),
                 ),
                 child: GFListTile(
                   titleText: 'Personal Budget',
@@ -71,11 +68,9 @@ class Layout extends StatelessWidget {
     );
   }
 
-  Widget _getUserImage() {
-    return CachedNetworkImage(
-      imageUrl: FirebaseAuth.instance.currentUser?.photoURL ?? '',
-      placeholder: (context, url) => const CircularProgressIndicator(),
-      errorWidget: (context, url, error) => Image.asset("assets/icon.png"),
-    );
+  _getBackGroundImage() {
+    return FirebaseAuth.instance.currentUser != null
+        ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
+        : const AssetImage("assets/icon.png");
   }
 }

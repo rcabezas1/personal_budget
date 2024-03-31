@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:personal_budget/plan/plan_cycle_list.dart';
 import 'package:personal_budget/user/login_view.dart';
+import 'package:provider/provider.dart';
 
 import '../expenses/expense_list.dart';
 import '../charts/budget_charts.dart';
 import '../cycle/cycles_list.dart';
+import '../providers/user_provider.dart';
 import 'menu_list.dart';
 
 class MenuOption extends StatelessWidget {
@@ -28,10 +30,18 @@ class MenuOption extends StatelessWidget {
   }
 
   _navigateTo(BuildContext context, MenuList option) {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => _step(option)),
-        (route) => false);
+    UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    if (option != MenuList.login && provider.isLogged()) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => _step(option)),
+          (route) => false);
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginView()),
+          (route) => false);
+    }
   }
 
   _step(MenuList option) {
