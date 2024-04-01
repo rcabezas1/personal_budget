@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../service/user_service.dart';
 import '../storage/memory_storage.dart';
 import '../user/user_data.dart';
-import '../user/user_service.dart';
 
 class UserProvider with ChangeNotifier {
   UserProvider(this._userService);
@@ -60,24 +60,33 @@ class UserProvider with ChangeNotifier {
   }
 
   checkUserAuthenticated() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         if (MemoryStorage.instance.token != null) {
-          _userService.singout().then((value) => _clearData());
+          await _userService.singout().then((value) => _clearData());
         } else {
           notifyListeners();
         }
       } else {
-        user.getIdToken().then((token) async =>
-            _userService.singin(token).then((value) => _updateUserData(value)));
+        await _userService
+            .singin(user)
+            .then((userData) => _updateUserData(userData));
       }
     });
+  }
+
+  addUserData() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      await _userService
+          .singin(currentUser)
+          .then((userData) => _updateUserData(userData));
+    }
   }
 
   _updateUserData(UserData value) async {
     MemoryStorage.instance.userData = value;
     await loadSettings();
-    MemoryStorage.instance.notifications;
   }
 
   _clearData() {

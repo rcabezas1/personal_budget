@@ -13,6 +13,7 @@ import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:provider/provider.dart';
 
 import '../formats.dart';
+import '../storage/memory_storage.dart';
 
 class CycleCard extends StatefulWidget {
   const CycleCard(
@@ -192,6 +193,7 @@ class CycleCardState extends State<CycleCard> {
     setState(() => saving = true);
     for (var plan in widget.plan) {
       await PlanCycleService().save(PlanCycle(
+          fuid: MemoryStorage.instance.userData?.fuid ?? "",
           expenses: [],
           clasification: plan.clasification,
           category: plan.category,

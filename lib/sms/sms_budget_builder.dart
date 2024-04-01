@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:personal_budget/sms/sms_parts.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 
 import '../expenses/expense.dart';
 import 'sms_templates.dart';
@@ -9,7 +10,8 @@ class SmsBudgetBuilder {
     SmsTypeTemplate? budgetTemplate = _getMessageType(body);
     var valid = budgetTemplate != null;
     if (valid) {
-      Expense budget = Expense.valid('sms$id');
+      Expense budget =
+          Expense.valid('sms$id', MemoryStorage.instance.userData?.fuid ?? "");
       budget.type = budgetTemplate.type;
       _getSmsParts(body, budgetTemplate).forEach((part) {
         switch (part.type) {
@@ -30,7 +32,7 @@ class SmsBudgetBuilder {
       });
       return budget;
     }
-    return Expense.invalid("");
+    return Expense.invalid("", "");
   }
 
   static SmsTypeTemplate? _getMessageType(String body) {

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/layout/menu_option.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import 'menu_list.dart';
 
@@ -40,32 +39,43 @@ class Layout extends StatelessWidget {
       drawer: GFDrawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: <Widget>[
-            GFDrawerHeader(
-                decoration: const BoxDecoration(color: GFColors.PRIMARY),
-                centerAlign: true,
-                currentAccountPicture: GFAvatar(
-                  backgroundColor: GFColors.FOCUS,
-                  backgroundImage: _getBackGroundImage(),
-                ),
-                child: GFListTile(
-                  titleText: 'Personal Budget',
-                  subTitleText:
-                      FirebaseAuth.instance.currentUser?.displayName ??
-                          'Presupuesto Gastos',
-                  listItemTextColor: GFColors.LIGHT,
-                )),
-            MenuOption(option: MenuList.login, selectedId: id),
-            MenuOption(option: MenuList.expense, selectedId: id),
-            MenuOption(option: MenuList.cycle, selectedId: id),
-            MenuOption(option: MenuList.charts, selectedId: id),
-            MenuOption(option: MenuList.plan, selectedId: id),
-          ],
+          children: _getMenuOptions(),
         ),
       ),
       body: body,
       floatingActionButton: floatingActionButton,
     );
+  }
+
+  Widget _getHeader() {
+    return GFDrawerHeader(
+        decoration: const BoxDecoration(color: GFColors.PRIMARY),
+        centerAlign: true,
+        currentAccountPicture: GFAvatar(
+          backgroundColor: GFColors.FOCUS,
+          backgroundImage: _getBackGroundImage(),
+        ),
+        child: GFListTile(
+          titleText: 'Personal Budget',
+          subTitleText: FirebaseAuth.instance.currentUser?.displayName ??
+              'Presupuesto Gastos',
+          listItemTextColor: GFColors.LIGHT,
+        ));
+  }
+
+  List<Widget> _getMenuOptions() {
+    var header = _getHeader();
+    if (FirebaseAuth.instance.currentUser != null) {
+      return [
+        header,
+        MenuOption(option: MenuList.expense, selectedId: id),
+        MenuOption(option: MenuList.cycle, selectedId: id),
+        MenuOption(option: MenuList.charts, selectedId: id),
+        MenuOption(option: MenuList.plan, selectedId: id),
+        MenuOption(option: MenuList.login, selectedId: id)
+      ];
+    }
+    return [header, MenuOption(option: MenuList.login, selectedId: id)];
   }
 
   _getBackGroundImage() {

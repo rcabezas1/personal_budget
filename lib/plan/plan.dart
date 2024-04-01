@@ -2,11 +2,12 @@ import 'package:personal_budget/service/mongo/mongo_number.dart';
 
 class Plan {
   String? id;
+  String fuid;
   String? clasification;
   String? category;
   double? value;
 
-  Plan({this.id, this.clasification, this.category, this.value});
+  Plan(this.fuid, {this.id, this.clasification, this.category, this.value});
 
   Map<String, dynamic> toJson() => {
         'clasification': clasification ?? "",
@@ -15,6 +16,7 @@ class Plan {
       };
 
   static Plan fromJson(Map<String, dynamic> json) => Plan(
+        json['fuid'] as String? ?? "",
         id: json['_id'] as String? ?? "",
         clasification: json['clasification'] as String? ?? "",
         category: json['category'] as String? ?? "",

@@ -9,6 +9,7 @@ import 'package:personal_budget/service/mongo/mongo_client.dart';
 import 'dart:convert';
 
 import '../plan/plan_cycle.dart';
+import '../storage/memory_storage.dart';
 
 final collection = dotenv.get("PLAN_CYCLE_COLLECTION");
 
@@ -48,6 +49,7 @@ class PlanCycleService {
       planCycle.actualValue = planCycle.actualValue! - planExpense.value;
     }
     planCycle.expenses = planExpenses;
+    planCycle.fuid = MemoryStorage.instance.userData?.fuid ?? "";
     await save(planCycle);
   }
 
@@ -88,7 +90,11 @@ class PlanCycleService {
 
       Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection);
+      var mongoBody = MongoRequest.filter(collection,
+          filter: FilterFields([
+            FieldsFilter("valid", "true"),
+            FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")
+          ]));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {
@@ -113,7 +119,7 @@ class PlanCycleService {
     List<PlanCycle> planCycles = await findAll();
     PlanCycle planCycle = planCycles.firstWhere(
       (element) => element.id == toDelete.plan,
-      orElse: () => PlanCycle(expenses: const []),
+      orElse: () => PlanCycle(expenses: const [], fuid: ""),
     );
     if (planCycle.id != null) {
       var planExpenses = planCycle.expenses;
@@ -122,7 +128,7 @@ class PlanCycleService {
     }
   }
 
-  Future<PlanCycle?> findOn0eById(String id) async {
+  Future<PlanCycle?> findOneById(String id) async {
     PlanCycle? data;
     try {
       var url = "$mongoService/findOne";

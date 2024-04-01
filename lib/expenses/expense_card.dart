@@ -9,6 +9,7 @@ import 'package:personal_budget/inputs/text_currency.dart';
 import 'package:personal_budget/loaders/avatar_loader.dart';
 import 'package:personal_budget/plan/plan_cycle.dart';
 import 'package:personal_budget/service/expense_service.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../formats.dart';
@@ -69,7 +70,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
         Provider.of<BudgetProvider>(context, listen: false);
     selectedPlan = provider.getPlanCycle().firstWhere(
           (element) => element.id == widget.expense.plan,
-          orElse: () => PlanCycle(expenses: []),
+          orElse: () => PlanCycle(fuid: "", expenses: []),
         );
   }
 
@@ -141,6 +142,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
     setState(() => saving = true);
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
+    widget.expense.fuid = MemoryStorage.instance.userData?.fuid ?? "";
     await ExpenseService().save(widget.expense);
     await PlanCycleService().updateActualState(widget.expense);
     await provider.searchPlanCycle(true);

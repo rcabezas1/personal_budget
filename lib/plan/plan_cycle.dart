@@ -7,6 +7,7 @@ class PlanCycle {
   String? category;
   String? cycleId;
   String? planId;
+  String fuid;
   List<PlanExpense> expenses;
   double? initialValue;
   double? actualValue;
@@ -22,6 +23,7 @@ class PlanCycle {
       this.initialValue,
       this.actualValue,
       required this.expenses,
+      required this.fuid,
       this.valid = true});
 
   Map<String, dynamic> toJson() => {
@@ -32,6 +34,7 @@ class PlanCycle {
         'initialValue': MongoNumberDouble(initialValue ?? 0),
         'actualValue': MongoNumberDouble(actualValue ?? 0),
         'expenses': expenses.map((expenseId) => expenseId).toList(),
+        'fuid': fuid,
         'valid': valid,
       };
 
@@ -44,6 +47,7 @@ class PlanCycle {
         initialValue: double.parse('${json['initialValue'] ?? "0"}'),
         actualValue: double.parse('${json['actualValue'] ?? "0"}'),
         expenses: getExpenses(json['expenses'] ?? []),
+        fuid: json['fuid'] as String? ?? "",
         valid: json['valid'] as bool? ?? false,
       );
 

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:personal_budget/cycle/budget_cycle.dart';
 import 'package:personal_budget/service/filters/filter_date.dart';
+import 'package:personal_budget/service/filters/filter_fields.dart';
 import 'package:personal_budget/service/filters/filter_id.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
 import 'package:personal_budget/service/partial/budget_cycle_update.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'dart:convert';
 
 import '../expenses/expense.dart';
@@ -92,7 +94,11 @@ class ExpenseService {
 
       Uri uri = Uri.https(mongoApi, url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection);
+      var mongoBody = MongoRequest.filter(collection,
+          filter: FilterFields([
+            FieldsFilter("valid", "true"),
+            FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")
+          ]));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {

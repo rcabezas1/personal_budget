@@ -12,5 +12,6 @@ class FieldsFilter {
   String property;
   String value;
   FieldsFilter(this.property, this.value);
-  Map<String, dynamic> toJson() => <String, dynamic>{property: value};
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{property: value == "true" ? true : value};
 }

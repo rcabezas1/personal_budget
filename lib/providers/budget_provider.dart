@@ -90,11 +90,11 @@ class BudgetProvider extends ChangeNotifier {
       if (addresses.isNotEmpty) {
         _smsMessages = [];
         for (var address in addresses.split(",")) {
-          _smsMessages.addAll(await _query.querySms(
-            kinds: [SmsQueryKind.inbox],
-            address: address,
-            count: int.parse(dotenv.get("SMS_COUNT", fallback: "100")),
-          ));
+          var addressMessages = await _query.querySms(
+              kinds: [SmsQueryKind.inbox],
+              address: address,
+              count: int.parse(dotenv.get("SMS_COUNT", fallback: "100")));
+          _smsMessages.addAll(addressMessages);
         }
       }
     }

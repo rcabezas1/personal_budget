@@ -5,6 +5,7 @@ import 'expense_type.dart';
 
 class Expense {
   String id;
+  String fuid;
   String? commerce;
   double? value;
   DateTime? date;
@@ -16,7 +17,7 @@ class Expense {
   double? initialValue;
   bool valid = false;
 
-  Expense.valid(this.id,
+  Expense.valid(this.id, this.fuid,
       {this.commerce,
       this.value,
       this.date,
@@ -29,11 +30,11 @@ class Expense {
     valid = true;
   }
 
-  Expense.invalid(this.id) {
+  Expense.invalid(this.id, this.fuid) {
     valid = false;
   }
 
-  Expense.manual(this.id) {
+  Expense.manual(this.id, this.fuid) {
     type = ExpenseType.cash;
     sms = "";
     valid = true;
@@ -42,6 +43,7 @@ class Expense {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'fuid': fuid,
         'commerce': commerce ?? "",
         'value': MongoNumberDouble(value ?? 0),
         'date': MongoDate(date ?? DateTime.now()),
@@ -56,6 +58,7 @@ class Expense {
 
   static Expense fromJson(Map<String, dynamic> json) => Expense.valid(
         json['id'] as String? ?? "",
+        json['fuid'] as String? ?? "",
         commerce: json['commerce'] as String? ?? "",
         category: json['category'] as String? ?? "",
         plan: json['plan'] as String? ?? "",

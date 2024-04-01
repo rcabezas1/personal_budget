@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:personal_budget/expenses/expense_card.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import 'expense.dart';
@@ -24,7 +25,8 @@ class AddExpenseState extends State<AddExpense> {
         body: SingleChildScrollView(
           restorationId: "manual",
           child: ExpenseCard(
-            expense: Expense.manual("cash${const Uuid().v4()}"),
+            expense: Expense.manual("cash${const Uuid().v4()}",
+                MemoryStorage.instance.userData?.fuid ?? ""),
             input: true,
           ),
         ));

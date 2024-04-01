@@ -6,6 +6,9 @@ import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
 import 'dart:convert';
 
+import '../storage/memory_storage.dart';
+import 'filters/filter_fields.dart';
+
 final collection = dotenv.get("CYCLE_COLLECTION");
 
 class CycleService {
@@ -64,7 +67,11 @@ class CycleService {
 
       Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection);
+      var mongoBody = MongoRequest.filter(collection,
+          filter: FilterFields([
+            FieldsFilter("valid", "true"),
+            FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")
+          ]));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {

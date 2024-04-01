@@ -6,10 +6,11 @@ class BudgetCycle {
   DateTime endDate;
   String description;
   bool enabled;
+  String fuid;
   String? mongoId;
 
-  BudgetCycle(
-      this.id, this.description, this.startDate, this.endDate, this.enabled,
+  BudgetCycle(this.id, this.description, this.startDate, this.endDate,
+      this.fuid, this.enabled,
       {this.mongoId});
 
   Map<String, dynamic> toJson() => {
@@ -17,6 +18,7 @@ class BudgetCycle {
         'description': description,
         'startDate': MongoDate(startDate),
         'endDate': MongoDate(endDate),
+        'fuid': fuid,
         'enabled': enabled,
         'valid': true,
       };
@@ -26,6 +28,7 @@ class BudgetCycle {
       json['description'] as String? ?? "",
       DateTime.parse(json['startDate']).toLocal(),
       DateTime.parse(json['endDate']).toLocal(),
+      json['fuid'] as String? ?? "",
       json['enabled'] as bool? ?? false,
       mongoId: json['_id'] as String?);
 }

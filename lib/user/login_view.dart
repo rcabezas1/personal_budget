@@ -27,13 +27,21 @@ class LoginView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 100),
+            GFAvatar(
+              size: 100,
+              backgroundColor: GFColors.TRANSPARENT,
+              backgroundImage: NetworkImage(FirebaseAuth
+                      .instance.currentUser?.photoURL ??
+                  "https://ik.imagekit.io/5pf21gxsf/public/control-de-acceso.png"),
+            ),
+            const SizedBox(height: 40),
             Text(
-              "Iniciar Sesión",
+              FirebaseAuth.instance.currentUser?.displayName ??
+                  "Iniciar sesión",
               style: textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 50),
-            const SizedBox(height: 50),
+            const SizedBox(height: 40),
             _singInSignOut(context),
           ],
         ))));
@@ -54,6 +62,9 @@ class LoginView extends StatelessWidget {
           onPressed: () => _signInAndRedirect(context));
     }
     return GFButton(
+      color: GFColors.DANGER,
+      shape: GFButtonShape.pills,
+      icon: const Icon(Icons.logout),
       onPressed: () =>
           provider.signout().then((value) => _loginNavigation(context)),
       text: "Desconectarse",

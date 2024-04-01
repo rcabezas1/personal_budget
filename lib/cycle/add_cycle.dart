@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/colors/gf_color.dart';
 import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:personal_budget/cycle/cycle_card.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import 'budget_cycle.dart';
@@ -25,7 +26,12 @@ class _AddCyclesState extends State<AddCycles> {
             restorationId: "cycles",
             child: CycleCard(
               cycle: BudgetCycle(
-                  const Uuid().v4(), "", DateTime.now(), DateTime.now(), false),
+                  const Uuid().v4(),
+                  "",
+                  DateTime.now(),
+                  DateTime.now(),
+                  MemoryStorage.instance.userData?.fuid ?? "",
+                  false),
               plan: const [],
               input: true,
             )));
