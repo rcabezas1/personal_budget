@@ -10,8 +10,10 @@ class Layout extends StatelessWidget {
       {Key? key,
       required this.id,
       required this.title,
+      this.titleWidget,
       this.actions,
       required this.body,
+      this.footer,
       this.floatingActionButton,
       this.searchBar,
       this.searchController})
@@ -19,8 +21,10 @@ class Layout extends StatelessWidget {
 
   final MenuList id;
   final Widget body;
+  final List<Widget>? footer;
   final List<Widget>? actions;
   final String title;
+  final Widget? titleWidget;
   final Widget? floatingActionButton;
   final bool? searchBar;
   final TextEditingController? searchController;
@@ -33,7 +37,7 @@ class Layout extends StatelessWidget {
         searchBar: searchBar ?? false,
         searchHintText: "Buscar",
         searchController: searchController,
-        title: Text(title),
+        title: titleWidget ?? Text(title),
         actions: actions,
       ),
       drawer: GFDrawer(
@@ -43,6 +47,7 @@ class Layout extends StatelessWidget {
         ),
       ),
       body: body,
+      persistentFooterButtons: footer,
       floatingActionButton: floatingActionButton,
     );
   }

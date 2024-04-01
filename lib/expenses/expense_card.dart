@@ -33,6 +33,7 @@ class ExpenseCard extends StatefulWidget {
 
 class _ExpenseCardState extends State<ExpenseCard> {
   bool saving = false;
+  bool validPlanCycle = false;
 
   @override
   void initState() {
@@ -56,7 +57,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_inputDescription(), _inputPlan()],
+          children: _getInputs(),
         ),
         buttonBar: GFButtonBar(
             runAlignment: WrapAlignment.end,
@@ -65,9 +66,17 @@ class _ExpenseCardState extends State<ExpenseCard> {
             children: _buttons()));
   }
 
+  List<Widget> _getInputs() {
+    if (!validPlanCycle) {
+      return [_inputDescription(), _inputCategory()];
+    }
+    return [_inputDescription(), _inputPlan()];
+  }
+
   _initSelectedProvider() {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
+    validPlanCycle = provider.getPlanCycle().isNotEmpty;
     selectedPlan = provider.getPlanCycle().firstWhere(
           (element) => element.id == widget.expense.plan,
           orElse: () => PlanCycle(fuid: "", expenses: []),
@@ -113,7 +122,9 @@ class _ExpenseCardState extends State<ExpenseCard> {
   }
 
   _validToSave() {
-    widget.expense.category = selectedPlan?.category ?? "";
+    if (validPlanCycle) {
+      widget.expense.category = selectedPlan?.category ?? "";
+    }
     var category = widget.expense.category?.trim().isNotEmpty ?? false;
     var description = widget.expense.description?.trim().isNotEmpty ?? false;
     var commerce = widget.expense.commerce?.trim().isNotEmpty ?? false;
@@ -170,6 +181,22 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   _textCommerce() {
     return Text(widget.expense.commerce ?? "");
+  }
+
+  _inputCategory() {
+    return TextFormField(
+      decoration: const InputDecoration(
+        hintText: 'Categoria',
+      ),
+      initialValue: widget.expense.category,
+      onChanged: _setCategory,
+    );
+  }
+
+  void _setCategory(String category) {
+    setState(() {
+      widget.expense.category = category.trim();
+    });
   }
 
   _inputPlan() {

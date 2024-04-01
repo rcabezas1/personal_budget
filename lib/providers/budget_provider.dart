@@ -46,6 +46,7 @@ class BudgetProvider extends ChangeNotifier {
     if (_plan.isEmpty || refresh) {
       _plan = await PlanService().findAll();
       _plan.sort((one, two) => two.category!.compareTo(one.category!));
+      notifyListeners();
     }
   }
 

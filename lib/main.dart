@@ -22,12 +22,12 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  UserProvider userProvider = UserProvider(UserService());
+  await userProvider.addUserData();
+  await userProvider.checkUserAuthenticated();
   BudgetProvider budgetProvider = BudgetProvider();
   budgetProvider.smsAvailable = defaultTargetPlatform == TargetPlatform.iOS ||
       defaultTargetPlatform == TargetPlatform.android;
-  UserProvider userProvider = UserProvider(UserService());
-  await userProvider.addUserData();
-  userProvider.checkUserAuthenticated();
   await budgetProvider.searchPlanCycle(true);
   await budgetProvider.searchPlan(true);
   runApp(MultiProvider(providers: [

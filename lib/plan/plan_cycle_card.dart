@@ -45,8 +45,7 @@ class PlanCycleCardState extends State<PlanCycleCard> {
       percentage:
           _getPercentage(widget.cycle.initialValue!, widget.cycle.actualValue!),
       lineHeight: 45,
-      backgroundColor: getPercentageColor(
-          widget.cycle.initialValue!, widget.cycle.actualValue!),
+      backgroundColor: _getPercentageColor(widget.cycle.actualValue!),
       progressBarColor: GFColors.SECONDARY,
       child: Text(
         '\$${currencyFormat.format(widget.cycle.actualValue!)}',
@@ -66,8 +65,8 @@ class PlanCycleCardState extends State<PlanCycleCard> {
     return 0;
   }
 
-  getPercentageColor(double initial, double actual) {
-    if (initial - actual < 0) {
+  _getPercentageColor(double actual) {
+    if (actual < 0) {
       return GFColors.DANGER;
     }
     return GFColors.DARK;
