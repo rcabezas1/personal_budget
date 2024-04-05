@@ -42,19 +42,25 @@ class PlanCycleCardState extends State<PlanCycleCard> {
 
   _progress() {
     return GFProgressBar(
-      percentage:
-          _getPercentage(widget.cycle.initialValue!, widget.cycle.actualValue!),
-      lineHeight: 45,
-      backgroundColor: _getPercentageColor(widget.cycle.actualValue!),
-      progressBarColor: GFColors.SECONDARY,
-      child: Text(
-        '\$${currencyFormat.format(widget.cycle.actualValue!)}',
-        style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: GFColors.LIGHT,
-            fontSize: GFSize.SMALL),
-      ),
-    );
+        percentage: _getPercentage(
+            widget.cycle.initialValue!, widget.cycle.actualValue!),
+        lineHeight: 45,
+        backgroundColor: _getPercentageColor(widget.cycle.actualValue!),
+        progressBarColor: GFColors.SECONDARY,
+        child: Column(
+          children: [
+            const SizedBox.square(
+              dimension: 4,
+            ),
+            Text(
+              '\$${currencyFormat.format(widget.cycle.actualValue!)}',
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: GFColors.LIGHT,
+                  fontSize: GFSize.SMALL),
+            ),
+          ],
+        ));
   }
 
   double _getPercentage(double initial, double actual) {

@@ -17,13 +17,12 @@ final collection = dotenv.get("BUDGET_COLLECTION");
 class ExpenseService {
   Future<void> save(Expense message) async {
     try {
-      var url = "$mongoService/updateOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
+      var url = "${client.mongoService}/updateOne";
+      Uri uri = Uri.parse(url);
 
-      var mongoBody =
-          MongoRequest.upsert(collection, FilterId(message.id), message);
+      var mongoBody = MongoRequest.upsert(
+          client, collection, FilterId(message.id), message);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -40,12 +39,12 @@ class ExpenseService {
 
   Future<void> updateCycle(BudgetCycle cycle) async {
     try {
-      var url = "$mongoService/updateMany";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
+      var url = "${client.mongoService}/updateMany";
+      Uri uri = Uri.parse(url);
 
       var mongoBody = MongoRequest.updateAll(
+          client,
           collection,
           FilterDate(cycle.startDate, cycle.endDate, "date"),
           BudgetCycleUpdate(cycle.mongoId ?? '', cycle.enabled));
@@ -66,11 +65,10 @@ class ExpenseService {
 
   Future<bool> delete(String id) async {
     try {
-      var url = "$mongoService/deleteOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.delete(collection, FilterId(id));
+      var url = "${client.mongoService}/deleteOne";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.delete(client, collection, FilterId(id));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -90,11 +88,10 @@ class ExpenseService {
   Future<List<Expense>> findAllValid() async {
     List<Expense> data = [];
     try {
-      var url = "$mongoApiPath/find";
-
-      Uri uri = Uri.https(mongoApi, url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection,
+      var url = "${client.mongoService}/find";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.filter(client, collection,
           filter: FilterFields([
             FieldsFilter("valid", "true"),
             FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")

@@ -31,11 +31,11 @@ class UserService {
 
   Future<String?> save(UserData message) async {
     try {
-      var url = "$mongoService/updateOne";
+      var client = MongoClient(defaultApiKey: true);
+      var url = "${client.mongoService}/updateOne";
       Uri uri = Uri.parse(url);
-      var client = MongoClient();
       var mongoBody = MongoRequest.upsert(
-          collection, FilterSingleField("uid", message.uid), message);
+          client, collection, FilterSingleField("uid", message.uid), message);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -55,11 +55,10 @@ class UserService {
   Future<List<UserData>> findAll() async {
     List<UserData> data = [];
     try {
-      var url = "$mongoService/find";
-
+      var client = MongoClient(defaultApiKey: true);
+      var url = "${client.mongoService}/find";
       Uri uri = Uri.parse(url);
-      var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection);
+      var mongoBody = MongoRequest.filter(client, collection);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {
@@ -83,11 +82,10 @@ class UserService {
   Future<UserData?> findOneById(String uid) async {
     UserData? data;
     try {
-      var url = "$mongoService/findOne";
-
+      var client = MongoClient(defaultApiKey: true);
+      var url = "${client.mongoService}/findOne";
       Uri uri = Uri.parse(url);
-      var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection,
+      var mongoBody = MongoRequest.filter(client, collection,
           filter: FilterSingleField("uid", uid));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
@@ -125,13 +123,37 @@ class UserService {
     if (user != null) {
       var founded = await findOneById(user.uid);
       var fuid = "";
+      var apiKey = "";
+      var dashboard = "";
+      var dataApi = "";
+      var dataBase = "";
+      var dataSource = "";
       if (founded == null || founded.uid == "") {
         fuid = const Uuid().v4();
+        apiKey = dotenv.get("MONGO_API_KEY");
+        dashboard = dotenv.get("CHARTS");
+        dataApi = dotenv.get("MONGO_SERVICE");
+        dataBase = dotenv.get("DATABASE");
+        dataSource = dotenv.get("DATASOURCE");
       } else {
         fuid = founded.fuid;
+        apiKey = founded.apiKey;
+        dashboard = founded.dashboard;
+        dataApi = founded.dataApi;
+        dataBase = founded.dataBase;
+        dataSource = founded.dataSource;
       }
-      var userData = UserData(user.uid, user.email ?? "",
-          user.displayName ?? "", user.photoURL ?? "", fuid);
+      var userData = UserData(
+          user.uid,
+          user.email ?? "",
+          user.displayName ?? "",
+          user.photoURL ?? "",
+          fuid,
+          apiKey,
+          dashboard,
+          dataApi,
+          dataBase,
+          dataSource);
       await save(userData);
       return userData;
     }

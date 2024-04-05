@@ -55,18 +55,17 @@ class PlanCycleService {
 
   Future<String?> save(PlanCycle message) async {
     try {
-      var url = "$mongoService/updateOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
+      var url = "${client.mongoService}/updateOne";
+      Uri uri = Uri.parse(url);
 
       List<FieldsFilter> fields = [
         FieldsFilter("cycleId", message.cycleId ?? ""),
         FieldsFilter("planId", message.planId ?? "")
       ];
 
-      var mongoBody =
-          MongoRequest.upsert(collection, FilterFields(fields), message);
+      var mongoBody = MongoRequest.upsert(
+          client, collection, FilterFields(fields), message);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -86,11 +85,10 @@ class PlanCycleService {
   Future<List<PlanCycle>> findAll() async {
     List<PlanCycle> data = [];
     try {
-      var url = "$mongoService/find";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection,
+      var url = "${client.mongoService}/find";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.filter(client, collection,
           filter: FilterFields([
             FieldsFilter("valid", "true"),
             FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")
@@ -131,11 +129,11 @@ class PlanCycleService {
   Future<PlanCycle?> findOneById(String id) async {
     PlanCycle? data;
     try {
-      var url = "$mongoService/findOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection, filter: FilterId(id));
+      var url = "${client.mongoService}/findOne";
+      Uri uri = Uri.parse(url);
+      var mongoBody =
+          MongoRequest.filter(client, collection, filter: FilterId(id));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 200) {

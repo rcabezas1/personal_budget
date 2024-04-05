@@ -14,13 +14,12 @@ final collection = dotenv.get("CYCLE_COLLECTION");
 class CycleService {
   Future<String?> save(BudgetCycle message) async {
     try {
-      var url = "$mongoService/updateOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
+      var url = "${client.mongoService}/updateOne";
+      Uri uri = Uri.parse(url);
 
-      var mongoBody =
-          MongoRequest.upsert(collection, FilterId(message.id), message);
+      var mongoBody = MongoRequest.upsert(
+          client, collection, FilterId(message.id), message);
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -39,11 +38,10 @@ class CycleService {
 
   Future<bool> delete(String id) async {
     try {
-      var url = "$mongoService/deleteOne";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.delete(collection, FilterId(id));
+      var url = "${client.mongoService}/deleteOne";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.delete(client, collection, FilterId(id));
       String body = jsonEncode(mongoBody.toJson());
       final response = await client.post(uri, body: body);
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -63,11 +61,10 @@ class CycleService {
   Future<List<BudgetCycle>> findAll() async {
     List<BudgetCycle> data = [];
     try {
-      var url = "$mongoService/find";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(collection,
+      var url = "${client.mongoService}/find";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.filter(client, collection,
           filter: FilterFields([
             FieldsFilter("valid", "true"),
             FieldsFilter("fuid", MemoryStorage.instance.userData?.fuid ?? "")

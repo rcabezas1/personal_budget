@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:personal_budget/layout/layout.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../layout/menu_list.dart';
@@ -20,7 +21,8 @@ class _BudgetChartsState extends State<BudgetCharts> {
   @override
   void initState() {
     super.initState();
-    controller.loadRequest(Uri.parse(dotenv.get("CHARTS")));
+    controller.loadRequest(Uri.parse(
+        MemoryStorage.instance.userData?.dashboard ?? dotenv.get("CHARTS")));
   }
 
   @override

@@ -58,18 +58,31 @@ class _PlanCycleListState extends State<PlanCycleList> {
   Widget _progress() {
     return Consumer<BudgetProvider>(
         builder: (context, provider, child) => GFProgressBar(
-              percentage: _getPercentage(provider),
-              lineHeight: 40,
-              backgroundColor: _getPercentageColor(provider),
-              progressBarColor: GFColors.INFO,
-              child: Text(
-                '\$${currencyFormat.format(_getActual(provider))}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: GFColors.LIGHT,
-                    fontSize: GFSize.SMALL),
-              ),
-            ));
+            percentage: _getPercentage(provider),
+            lineHeight: 40,
+            backgroundColor: _getPercentageColor(provider),
+            progressBarColor: GFColors.INFO,
+            child: Column(
+              children: [
+                const SizedBox.square(
+                  dimension: 2,
+                ),
+                Text(
+                  '\$${currencyFormat.format(_getActual(provider))}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: GFColors.LIGHT,
+                      fontSize: 20),
+                ),
+                Text(
+                  'Presupuesto: \$${currencyFormat.format(_getInitial(provider))}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: GFColors.LIGHT,
+                      fontSize: 12),
+                ),
+              ],
+            )));
   }
 
   double _getPercentage(BudgetProvider provider) {
@@ -104,6 +117,14 @@ class _PlanCycleListState extends State<PlanCycleList> {
       actual = actual + (element.actualValue ?? 0);
     });
     return actual;
+  }
+
+  _getInitial(BudgetProvider provider) {
+    double initial = 0;
+    provider.getPlanCycle().forEach((element) {
+      initial = initial + (element.initialValue ?? 0);
+    });
+    return initial;
   }
 
   _listBuilder(BudgetProvider provider) {

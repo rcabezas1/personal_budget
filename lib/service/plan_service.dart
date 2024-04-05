@@ -13,11 +13,10 @@ class PlanService {
   Future<List<Plan>> findAll() async {
     List<Plan> data = [];
     try {
-      var url = "$mongoService/find";
-
-      Uri uri = Uri.parse(url);
       var client = MongoClient();
-      var mongoBody = MongoRequest.filter(planCollection,
+      var url = "${client.mongoService}/find";
+      Uri uri = Uri.parse(url);
+      var mongoBody = MongoRequest.filter(client, planCollection,
           filter: FilterSingleField(
               "fuid", MemoryStorage.instance.userData?.fuid ?? ""));
       String body = jsonEncode(mongoBody.toJson());

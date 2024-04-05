@@ -6,6 +6,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/expenses/expense_list.dart';
 import 'package:personal_budget/layout/layout.dart';
 import 'package:personal_budget/layout/menu_list.dart';
+import 'package:personal_budget/providers/budget_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
@@ -49,6 +50,10 @@ class LoginView extends StatelessWidget {
 
   _signInAndRedirect(BuildContext context) async {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
+    BudgetProvider budgetProvider =
+        Provider.of<BudgetProvider>(context, listen: false);
+    await budgetProvider.searchPlanCycle(true);
+    await budgetProvider.searchPlan(true);
     await provider
         .signInWithGoogle()
         .then((value) => _homeNavigation(context, value));
