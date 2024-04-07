@@ -61,6 +61,7 @@ class UserProvider with ChangeNotifier {
 
   checkUserAuthenticated() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      MemoryStorage.instance.endTimer("AUTH_CHANGE");
       if (user == null) {
         if (MemoryStorage.instance.token != null) {
           await _userService.singout().then((value) => _clearData());
@@ -87,6 +88,7 @@ class UserProvider with ChangeNotifier {
   _updateUserData(UserData value) async {
     MemoryStorage.instance.userData = value;
     await loadSettings();
+    MemoryStorage.instance.endTimer("USER_DATA");
   }
 
   _clearData() {

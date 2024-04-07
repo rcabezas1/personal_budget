@@ -5,6 +5,7 @@ import 'package:personal_budget/expenses/expense_list.dart';
 import 'package:personal_budget/providers/budget_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:personal_budget/providers/user_provider.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:personal_budget/user/login_view.dart';
 
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ import 'firebase_options.dart';
 import 'service/user_service.dart';
 
 Future<void> main() async {
+  MemoryStorage.instance.startTimer();
   await dotenv.load();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +30,10 @@ Future<void> main() async {
   BudgetProvider budgetProvider = BudgetProvider();
   budgetProvider.smsAvailable = defaultTargetPlatform == TargetPlatform.iOS ||
       defaultTargetPlatform == TargetPlatform.android;
-  await budgetProvider.searchPlanCycle(true);
-  await budgetProvider.searchPlan(true);
+  if (FirebaseAuth.instance.currentUser != null) {
+    budgetProvider.searchPlanCycle(true);
+    budgetProvider.searchPlan(true);
+  }
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => budgetProvider),
     ChangeNotifierProvider(create: (context) => userProvider)
@@ -45,6 +49,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: const [Locale('es', 'CO'), Locale('en')],
+      themeMode: ThemeMode.system,
       restorationScopeId: "personal_budget",
       home: FirebaseAuth.instance.currentUser != null
           ? const ExpensesList()

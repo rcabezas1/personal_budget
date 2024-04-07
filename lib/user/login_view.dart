@@ -52,11 +52,9 @@ class LoginView extends StatelessWidget {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     BudgetProvider budgetProvider =
         Provider.of<BudgetProvider>(context, listen: false);
-    await budgetProvider.searchPlanCycle(true);
-    await budgetProvider.searchPlan(true);
-    await provider
-        .signInWithGoogle()
-        .then((value) => _homeNavigation(context, value));
+    await provider.signInWithGoogle();
+    await _findUserData(budgetProvider)
+        .then((value) => _homeNavigation(context));
   }
 
   Widget _singInSignOut(BuildContext context) {
@@ -76,7 +74,12 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  _homeNavigation(BuildContext context, UserCredential user) {
+  Future<void> _findUserData(BudgetProvider budgetProvider) async {
+    await budgetProvider.searchPlanCycle(true);
+    budgetProvider.searchPlan(true);
+  }
+
+  _homeNavigation(BuildContext context) {
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const ExpensesList()),

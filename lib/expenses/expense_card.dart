@@ -205,7 +205,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
     return DropdownSearch<PlanCycle>(
       itemAsString: _itemStringValue,
       items: provider.getPlanCycle(),
-      compareFn: _compartePlan,
+      compareFn: _comparePlan,
       filterFn: _itemFilter,
       selectedItem: selectedPlan,
       popupProps: const PopupProps.dialog(showSearchBox: true),
@@ -220,7 +220,7 @@ class _ExpenseCardState extends State<ExpenseCard> {
     return "";
   }
 
-  bool _compartePlan(PlanCycle? item1, PlanCycle? item2) {
+  bool _comparePlan(PlanCycle? item1, PlanCycle? item2) {
     if (item1 != null && item2 != null) {
       return item1.category!.compareTo(item2.category!) > 0;
     }

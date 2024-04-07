@@ -154,7 +154,7 @@ class UserService {
           dataApi,
           dataBase,
           dataSource);
-      await save(userData);
+      save(userData);
       return userData;
     }
     throw Exception('Empty user');

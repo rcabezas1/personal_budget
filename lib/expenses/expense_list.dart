@@ -5,6 +5,7 @@ import 'package:personal_budget/expenses/expense.dart';
 import 'package:personal_budget/expenses/add_expense.dart';
 import 'package:personal_budget/layout/layout.dart';
 import 'package:personal_budget/service/plan_cycle_service.dart';
+import 'package:personal_budget/storage/memory_storage.dart';
 import 'package:provider/provider.dart';
 
 import 'expense_card.dart';
@@ -179,6 +180,7 @@ class _ExpensesListState extends State<ExpensesList> {
     } else {
       _searchProvider(provider);
     }
+    MemoryStorage.instance.endTimer("LOADING MESSAGES");
   }
 
   _searchProvider(BudgetProvider provider) {

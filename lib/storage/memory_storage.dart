@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../user/user_data.dart';
 
 class MemoryStorage {
@@ -8,6 +10,19 @@ class MemoryStorage {
   String? token;
   bool notifications = false;
   int totalNotifications = 0;
+
+  DateTime? start;
+
+  void startTimer() {
+    start = DateTime.now();
+  }
+
+  void endTimer(String identifier) {
+    if (start != null) {
+      int diff = DateTime.now().difference(start!).inMilliseconds;
+      debugPrint("Tiempo transcurrido:::$identifier:::$diff");
+    }
+  }
 
   void clearData() {
     userData = null;
