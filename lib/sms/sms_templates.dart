@@ -16,6 +16,9 @@ const creditRecurrentMessage =
 const debitRecurrentMessage =
     "Scotiabank Colpatria: Compra recurrente en |commerce| por |value| con tu tarjeta Debito Clasica |date| Linea";
 
+const withdrawal =
+    "Scotiabank Colpatria: Realizaste trans en |commerce| por |value| con tu tarjeta Clasica|date| Linea";
+
 class SmsTypeTemplate {
   ExpenseType type;
   String template;
@@ -29,5 +32,6 @@ var availableTypes = {
   SmsTypeTemplate(ExpenseType.creditCard, creditRecurrentMessage),
   SmsTypeTemplate(ExpenseType.pse, pseMessage),
   SmsTypeTemplate(ExpenseType.app, appMessage),
-  SmsTypeTemplate(ExpenseType.app, transferAppMessage)
+  SmsTypeTemplate(ExpenseType.app, transferAppMessage),
+  SmsTypeTemplate(ExpenseType.withdrawal, withdrawal)
 };
