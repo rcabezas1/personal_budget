@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:personal_budget/plan/plan.dart';
 import 'package:personal_budget/service/expense_service.dart';
