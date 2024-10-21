@@ -183,7 +183,7 @@ class CycleCardState extends State<CycleCard> {
     setState(() => saving = false);
   }
 
-  _delete() async {
+    _delete() async {
     setState(() => saving = true);
     await widget.delete!(widget.cycle);
     setState(() => saving = false);

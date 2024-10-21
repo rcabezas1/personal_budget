@@ -4,7 +4,6 @@ import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:personal_budget/plan/plan.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/plan_service.dart';
-
 import '../cycle/budget_cycle.dart';
 import '../expenses/expense.dart';
 import '../plan/plan_cycle.dart';
@@ -87,17 +86,9 @@ class BudgetProvider extends ChangeNotifier {
   Future<void> searchExpenses() async {
     await searchCycles(false);
     if (smsAvailable) {
-      String addresses = dotenv.get("SMS_ADDRESS");
-      if (addresses.isNotEmpty) {
-        _smsMessages = [];
-        for (var address in addresses.split(",")) {
-          var addressMessages = await _query.querySms(
-              kinds: [SmsQueryKind.inbox],
-              address: address,
-              count: int.parse(dotenv.get("SMS_COUNT", fallback: "100")));
-          _smsMessages.addAll(addressMessages);
-        }
-      }
+      _smsMessages = [];
+      var addressMessages = await _query.getAllSms;
+      _smsMessages.addAll(addressMessages);
     }
     _storedBudgetMessages = await ExpenseService().findAllValid();
     _processExpenses();
