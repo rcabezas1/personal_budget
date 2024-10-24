@@ -4,11 +4,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:personal_budget/service/filters/filter_single_field.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
-import 'package:personal_budget/user/user_data.dart';
+import 'package:personal_budget/model/user/user_data.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 
-import '../storage/memory_storage.dart';
+import 'storage/memory_storage.dart';
 
 final collection = dotenv.get("USER_COLLECTION");
 

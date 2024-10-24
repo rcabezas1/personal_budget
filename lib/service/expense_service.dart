@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:personal_budget/cycle/budget_cycle.dart';
+import 'package:personal_budget/model/cycle/budget_cycle.dart';
 import 'package:personal_budget/service/filters/filter_date.dart';
 import 'package:personal_budget/service/filters/filter_fields.dart';
 import 'package:personal_budget/service/filters/filter_id.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
 import 'package:personal_budget/service/partial/budget_cycle_update.dart';
-import 'package:personal_budget/storage/memory_storage.dart';
+import 'package:personal_budget/service/storage/memory_storage.dart';
 import 'dart:convert';
 
-import '../expenses/expense.dart';
+import '../model/expenses/expense.dart';
 
 final collection = dotenv.get("BUDGET_COLLECTION");
 

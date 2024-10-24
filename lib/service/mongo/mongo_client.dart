@@ -1,6 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:personal_budget/storage/memory_storage.dart';
+import 'package:personal_budget/service/storage/memory_storage.dart';
 
 class MongoClient extends http.BaseClient {
   final bool defaultApiKey;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:personal_budget/plan/plan.dart';
+import 'package:personal_budget/model/plan/plan.dart';
 import 'package:personal_budget/service/filters/filter_single_field.dart';
 import 'package:personal_budget/service/mongo/mongo_request.dart';
 import 'package:personal_budget/service/mongo/mongo_client.dart';
-import 'package:personal_budget/storage/memory_storage.dart';
+import 'package:personal_budget/service/storage/memory_storage.dart';
 import 'dart:convert';
 
 final planCollection = dotenv.get("PLAN_COLLECTION");

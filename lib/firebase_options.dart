@@ -4,16 +4,6 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
-///
-/// Example:
-/// ```dart
-/// import 'firebase_options.dart';
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-/// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -67,7 +57,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1075452885509',
     projectId: 'personal-budget-plan',
     storageBucket: 'personal-budget-plan.appspot.com',
-    iosClientId: '1075452885509-k8bclunl0umd9esoitdav6sahloifkcg.apps.googleusercontent.com',
+    iosClientId:
+        '1075452885509-k8bclunl0umd9esoitdav6sahloifkcg.apps.googleusercontent.com',
     iosBundleId: 'com.rcabezas1.personalBudget',
   );
 
@@ -77,7 +68,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1075452885509',
     projectId: 'personal-budget-plan',
     storageBucket: 'personal-budget-plan.appspot.com',
-    iosClientId: '1075452885509-bj83rkmqivo5cvsnfnpbdvvvmghu1e26.apps.googleusercontent.com',
+    iosClientId:
+        '1075452885509-bj83rkmqivo5cvsnfnpbdvvvmghu1e26.apps.googleusercontent.com',
     iosBundleId: 'com.rcabezas1.personalBudget.RunnerTests',
   );
 }
