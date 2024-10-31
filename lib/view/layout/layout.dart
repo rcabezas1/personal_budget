@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 import './menu_option.dart';
 
 import 'menu_list.dart';
@@ -31,15 +30,15 @@ class Layout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: GFAppBar(
-        backgroundColor: GFColors.PRIMARY,
-        searchBar: searchBar ?? false,
-        searchHintText: "Buscar",
-        searchController: searchController,
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
+        //searchBar: searchBar ?? false,
+        //searchHintText: "Buscar",
+        //searchController: searchController,
         title: titleWidget ?? Text(title),
         actions: actions,
       ),
-      drawer: GFDrawer(
+      drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: _getMenuOptions(),
@@ -51,7 +50,7 @@ class Layout extends StatelessWidget {
     );
   }
 
-  Widget _getHeader() {
+  /*Widget _getHeader() {
     return GFDrawerHeader(
         decoration: const BoxDecoration(color: GFColors.PRIMARY),
         centerAlign: true,
@@ -65,13 +64,13 @@ class Layout extends StatelessWidget {
               'Presupuesto Gastos',
           listItemTextColor: GFColors.LIGHT,
         ));
-  }
+  }*/
 
   List<Widget> _getMenuOptions() {
-    var header = _getHeader();
+    // var header =  _getHeader();
     if (FirebaseAuth.instance.currentUser != null) {
       return [
-        header,
+        //header,
         MenuOption(option: MenuList.expense, selectedId: id),
         MenuOption(option: MenuList.cycle, selectedId: id),
         MenuOption(option: MenuList.charts, selectedId: id),
@@ -79,7 +78,7 @@ class Layout extends StatelessWidget {
         MenuOption(option: MenuList.login, selectedId: id)
       ];
     }
-    return [header, MenuOption(option: MenuList.login, selectedId: id)];
+    return [/*header,*/ MenuOption(option: MenuList.login, selectedId: id)];
   }
 
   _getBackGroundImage() {

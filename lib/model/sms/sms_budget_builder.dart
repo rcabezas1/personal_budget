@@ -74,7 +74,7 @@ class SmsBudgetBuilder {
     try {
       var fixedDate = date.replaceAll("/", "-");
       var fixedTime = _fixTime(time);
-      return DateTime.parse('${fixedDate}T$fixedTime');
+      return DateTime.parse(' ${fixedDate}T$fixedTime');
     } catch (e) {
       debugPrint('$e: $date $time');
       return DateTime.now();

@@ -16,7 +16,6 @@ dependencies:
   flutter_dotenv: ^5.2.1
   flutter_localization: ^0.2.2
   flutter_signin_button: ^2.0.0
-  flutter_sms_inbox: ^1.0.3
   getwidget: ^4.0.0
   google_sign_in: ^6.2.1
   http: ^1.2.2
@@ -34,3 +33,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
+    - assets/

@@ -4,7 +4,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/service/providers/user_provider.dart';
-import 'package:personal_budget/view/expenses/expense_list.dart';
+//import 'package:personal_budget/view/expenses/expense_list.dart';
 import 'package:personal_budget/view/layout/layout.dart';
 import 'package:personal_budget/view/layout/menu_list.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +77,7 @@ class LoginView extends StatelessWidget {
   _homeNavigation(BuildContext context) {
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const ExpensesList()),
+        MaterialPageRoute(builder: (context) => const LoginView()),
         (route) => false);
   }
 

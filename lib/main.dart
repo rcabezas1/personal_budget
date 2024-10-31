@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -25,8 +24,6 @@ Future<void> main() async {
   await userProvider.addUserData();
   await userProvider.checkUserAuthenticated();
   BudgetProvider budgetProvider = BudgetProvider();
-  budgetProvider.smsAvailable = defaultTargetPlatform == TargetPlatform.iOS ||
-      defaultTargetPlatform == TargetPlatform.android;
   if (FirebaseAuth.instance.currentUser != null) {
     budgetProvider.searchPlanCycle(true);
     budgetProvider.searchPlan(true);
@@ -42,12 +39,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final FlutterLocalization localization = FlutterLocalization.instance;
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: localization.localizationsDelegates,
-      supportedLocales: const [Locale('es', 'CO'), Locale('en')],
       restorationScopeId: "personal_budget",
       home: const LoginView(),
     );

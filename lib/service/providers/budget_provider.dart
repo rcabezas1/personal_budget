@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
 import 'package:personal_budget/model/plan/plan.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/plan_service.dart';
@@ -13,8 +12,6 @@ import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:personal_budget/model/sms/sms_budget_builder.dart';
 
 class BudgetProvider extends ChangeNotifier {
-  final SmsQuery _query = SmsQuery();
-  List<SmsMessage> _smsMessages = [];
   final List<Expense> _budgetExpenses = [];
   List<Expense> _storedBudgetMessages = [];
   List<BudgetCycle> _budgetCycles = [];
@@ -86,11 +83,7 @@ class BudgetProvider extends ChangeNotifier {
 
   Future<void> searchExpenses() async {
     await searchCycles(false);
-    if (smsAvailable) {
-      _smsMessages = [];
-      var addressMessages = await _query.getAllSms;
-      _smsMessages.addAll(addressMessages);
-    }
+    if (smsAvailable) {}
     _storedBudgetMessages = await ExpenseService().findAllValid();
     _processExpenses();
     notifyListeners();
@@ -103,13 +96,7 @@ class BudgetProvider extends ChangeNotifier {
 
   _processExpenses() {
     _budgetExpenses.clear();
-
-    if (_smsMessages.isNotEmpty) {
-      _addSmsMessages();
-      _addNonSms();
-    } else {
-      _budgetExpenses.addAll(_storedBudgetMessages);
-    }
+    _budgetExpenses.addAll(_storedBudgetMessages);
     defaultSortExpenses();
   }
 
@@ -145,21 +132,6 @@ class BudgetProvider extends ChangeNotifier {
         _budgetExpenses.indexWhere((budget) => budget.id == stored.id) == -1);
     if (nonSmsMessages.isNotEmpty) {
       _budgetExpenses.addAll(nonSmsMessages);
-    }
-  }
-
-  _addSmsMessages() {
-    for (var message in _smsMessages) {
-      String body = message.body ?? "";
-      var expense = SmsBudgetBuilder.fromSMS(message.id, body);
-
-      if (_validExpenseCycle(expense)) {
-        expense.sms = message.body;
-        var element = _storedBudgetMessages.firstWhere(
-            (stored) => expense.id == stored.id,
-            orElse: () => expense);
-        _budgetExpenses.add(element);
-      }
     }
   }
 

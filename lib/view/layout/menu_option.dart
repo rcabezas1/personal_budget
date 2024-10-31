@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/colors/gf_color.dart';
-import 'package:personal_budget/view/charts/budget_charts.dart';
-import 'package:personal_budget/view/cycle/cycles_list.dart';
-import 'package:personal_budget/view/expenses/expense_list.dart';
+//import 'package:getwidget/colors/gf_color.dart';
+//import 'package:personal_budget/view/charts/budget_charts.dart';
+//import 'package:personal_budget/view/cycle/cycles_list.dart';
+//import 'package:personal_budget/view/expenses/expense_list.dart';
+//import 'package:personal_budget/view/plan/plan_cycle_list.dart';
 import 'package:personal_budget/view/login/login_view.dart';
-import 'package:personal_budget/view/plan/plan_cycle_list.dart';
 import 'package:provider/provider.dart';
 import 'package:personal_budget/service/providers/user_provider.dart';
 
@@ -23,8 +23,8 @@ class MenuOption extends StatelessWidget {
       title: Text(option.menuTitle),
       onTap: () => _navigateTo(context, option),
       selected: selectedId == option,
-      selectedTileColor: GFColors.ALT,
-      selectedColor: GFColors.LIGHT,
+      selectedTileColor: Colors.blueGrey,
+      selectedColor: Colors.blueAccent,
     );
   }
 
@@ -47,7 +47,7 @@ class MenuOption extends StatelessWidget {
     switch (option) {
       case MenuList.login:
         return const LoginView();
-      case MenuList.expense:
+      /* case MenuList.expense:
         return const ExpensesList();
       case MenuList.cycle:
         return const CyclesList();
@@ -56,7 +56,9 @@ class MenuOption extends StatelessWidget {
       case MenuList.plan:
         return const PlanCycleList();
       default:
-        return const ExpensesList();
+        return const ExpensesList();*/
+      default:
+        null;
     }
   }
 }
