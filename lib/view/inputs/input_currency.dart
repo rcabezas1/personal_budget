@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/size/gf_size.dart';
 
 import 'formats.dart';
 
@@ -26,10 +25,9 @@ class InputCurrency extends StatelessWidget {
       initialValue: _valueInitial(),
       keyboardType: TextInputType.number,
       onTap: onTap,
-      style: TextStyle(fontSize: size ?? GFSize.MEDIUM),
+      style: TextStyle(fontSize: size ?? 35),
       decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(fontSize: size ?? GFSize.MEDIUM)),
+          hintText: hintText, hintStyle: TextStyle(fontSize: size ?? 35)),
       onChanged: _setValue,
     );
   }

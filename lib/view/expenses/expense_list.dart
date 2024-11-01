@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/components/alert/gf_alert.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:personal_budget/model/expenses/expense.dart';
 import 'package:personal_budget/view/charts/budget_charts.dart';
 import 'package:personal_budget/view/expenses/add_expense.dart';
 import 'package:personal_budget/view/expenses/expense_card.dart';
-import 'package:personal_budget/view/inputs/formats.dart';
+//import 'package:personal_budget/view/inputs/formats.dart';
 import 'package:personal_budget/view/layout/layout.dart';
+import 'package:personal_budget/view/layout/menu_list.dart';
+import 'package:personal_budget/view/loaders/screen_loader.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/plan_cycle_service.dart';
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/service/storage/memory_storage.dart';
-import 'package:personal_budget/view/layout/menu_list.dart';
-import 'package:personal_budget/view/loaders/screen_loader.dart';
 import 'package:provider/provider.dart';
 
 class ExpensesList extends StatefulWidget {
@@ -46,42 +44,44 @@ class _ExpensesListState extends State<ExpensesList> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-        id: MenuList.expense,
-        title: MenuList.expense.menuTitle,
-        searchBar: true,
-        searchController: _searchController,
-        actions: [
-          IconButton(
-            onPressed: _showCharts,
-            icon: const Icon(
-              Icons.bar_chart,
-              color: Colors.lightBlue,
-            ),
+      id: MenuList.expense,
+      title: MenuList.expense.menuTitle,
+      searchBar: true,
+      searchController: _searchController,
+      actions: [
+        IconButton(
+          onPressed: _showCharts,
+          icon: const Icon(
+            Icons.bar_chart,
+            color: Colors.white,
           ),
-          IconButton(
-            onPressed: _addExpense,
-            icon: const Icon(
-              Icons.add,
-              color: Colors.lightBlue,
-            ),
-          )
-        ],
-        body: GFFloatingWidget(
+        ),
+        IconButton(
+          onPressed: _addExpense,
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        )
+      ],
+      body: /*FloatingWidget(
           showBlurness: showblur,
           verticalPosition: 80,
-          body: Consumer<BudgetProvider>(
+          body: */
+          Consumer<BudgetProvider>(
               builder: (context, provider, child) => RefreshIndicator(
                   onRefresh: _searchProviderMessages,
                   child: _loading
                       ? const ScreenLoader()
                       : _listBuilder(provider))),
-          child: alertWidget,
+      /* child: alertWidget,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _addExpense,
           backgroundColor: GFColors.PRIMARY,
           child: const Icon(Icons.add),
-        ));
+        )*/
+    );
   }
 
   _listBuilder(BudgetProvider provider) {
@@ -100,7 +100,7 @@ class _ExpensesListState extends State<ExpensesList> {
   Future<void> _deleteExpense(Expense message) async {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
-    setState(() {
+    /*setState(() {
       showblur = true;
       alertWidget = GFAlert(
         type: GFAlertType.rounded,
@@ -123,13 +123,13 @@ class _ExpensesListState extends State<ExpensesList> {
             onPressed: () {
               _doDelete(message, provider);
             },
-            color: GFColors.DANGER,
+            color: Colors.red,
             shape: GFButtonShape.pills,
             text: "Eliminar",
           )
         ]),
       );
-    });
+    });*/
   }
 
   _doDelete(Expense message, BudgetProvider provider) async {

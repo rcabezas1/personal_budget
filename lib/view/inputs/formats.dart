@@ -7,6 +7,4 @@ final currencyFormat = NumberFormat.currency(
   decimalDigits: 0,
   locale: "es-CO",
 );
-final currencyInputTextFormatter = CurrencyTextInputFormatter(
-    NumberFormat.compactCurrency(
-        locale: "es-CO", symbol: "", decimalDigits: 0));
+final currencyInputTextFormatter = CurrencyTextInputFormatter(currencyFormat);

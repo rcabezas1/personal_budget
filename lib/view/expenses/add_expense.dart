@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/colors/gf_color.dart';
-import 'package:getwidget/components/appbar/gf_appbar.dart';
 import 'package:personal_budget/model/expenses/expense.dart';
 import 'package:personal_budget/service/storage/memory_storage.dart';
 import 'package:personal_budget/view/expenses/expense_card.dart';
@@ -17,9 +15,9 @@ class AddExpenseState extends State<AddExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: GFAppBar(
+        appBar: AppBar(
           title: const Text('Agregar Gasto'),
-          backgroundColor: GFColors.PRIMARY,
+          backgroundColor: Colors.blue,
         ),
         body: SingleChildScrollView(
           restorationId: "manual",

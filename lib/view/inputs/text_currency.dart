@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/size/gf_size.dart';
 
 import 'formats.dart';
 
@@ -14,9 +13,11 @@ class TextCurrency extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      initialValue: '\$${currencyFormat.format(value)}',
+      initialValue: '\$${currencyFormat.format(value)}'.trim(),
       onTap: onTap,
-      style: TextStyle(fontSize: size ?? GFSize.MEDIUM),
+      enableInteractiveSelection: false,
+      style: TextStyle(fontSize: size ?? 35),
+      readOnly: true,
     );
   }
 }

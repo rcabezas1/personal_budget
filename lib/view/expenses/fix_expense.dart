@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
+//import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/model/expenses/expense.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/view/expenses/expense_list.dart';
@@ -23,13 +23,13 @@ class FixExpenseState extends State<FixExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: GFAppBar(
-          title: const Text('Ajustar valor'),
-          backgroundColor: GFColors.PRIMARY,
-        ),
-        body: SingleChildScrollView(
-          restorationId: "fix_expense",
-          child: GFCard(
+      appBar: AppBar(
+        title: const Text('Ajustar valor'),
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
+        restorationId: "fix_expense",
+        child: /*GFCard(
               title: GFListTile(
                 avatar: AvatarLoader(
                     saving: saving,
@@ -38,37 +38,39 @@ class FixExpenseState extends State<FixExpense> {
                 description: _textDate(),
                 subTitle: _textDescription(),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _inputLabel('Valor Inicial'),
-                  const SizedBox.square(
-                    dimension: 20,
-                  ),
-                  TextCurrency(
-                    value: widget.expense.initialValue!,
-                    size: GFSize.SMALL,
-                  ),
-                  const SizedBox.square(
-                    dimension: 30,
-                  ),
-                  _inputLabel('Ajuste Valor'),
-                  const SizedBox.square(
-                    dimension: 20,
-                  ),
-                  _inputValue(),
-                ],
-              ),
+              content: */
+            Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _inputLabel('Valor Inicial'),
+            const SizedBox.square(
+              dimension: 20,
+            ),
+            TextCurrency(
+              value: widget.expense.initialValue!,
+              size: 10,
+            ),
+            const SizedBox.square(
+              dimension: 30,
+            ),
+            _inputLabel('Ajuste Valor'),
+            const SizedBox.square(
+              dimension: 20,
+            ),
+            _inputValue(),
+          ],
+        ), /*
               buttonBar: GFButtonBar(
                   runAlignment: WrapAlignment.end,
                   alignment: WrapAlignment.end,
                   crossAxisAlignment: WrapCrossAlignment.end,
-                  children: _buttons())),
-        ));
+                  children: _buttons())*/
+      ),
+    );
   }
 
-  List<Widget> _buttons() {
+  /*List<Widget> _buttons() {
     return <Widget>[
       GFButton(
         onPressed: !saving ? _saveFixed : null,
@@ -80,7 +82,7 @@ class FixExpenseState extends State<FixExpense> {
         type: GFButtonType.outline2x,
       )
     ];
-  }
+  }*/
 
   _saveFixed() async {
     setState(() => saving = true);
@@ -119,14 +121,14 @@ class FixExpenseState extends State<FixExpense> {
 
   _textDescription() {
     return Text('${widget.expense.description}',
-        style: const TextStyle(fontSize: GFSize.SMALL));
+        style: const TextStyle(fontSize: 10));
   }
 
-  _textDate() {
+  /*_textDate() {
     return GFButton(
       onPressed: null,
       shape: GFButtonShape.pills,
       text: dateFormat.format(widget.expense.date!),
     );
-  }
+  }*/
 }

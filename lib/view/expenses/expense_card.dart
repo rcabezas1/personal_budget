@@ -3,17 +3,16 @@ import 'dart:async';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:personal_budget/model/expenses/expense_type.dart';
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/view/expenses/expense_list.dart';
 import 'package:personal_budget/view/expenses/fix_expense.dart';
 import 'package:personal_budget/view/inputs/text_currency.dart';
-import 'package:personal_budget/view/loaders/avatar_loader.dart';
 import 'package:personal_budget/model/plan/plan_cycle.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/service/storage/memory_storage.dart';
+import 'package:personal_budget/view/loaders/avatar_loader.dart';
 import 'package:provider/provider.dart';
 
 import 'package:personal_budget/view/inputs/formats.dart';
@@ -49,30 +48,52 @@ class _ExpenseCardState extends State<ExpenseCard> {
   @override
   Widget build(BuildContext context) {
     _initSelectedProvider();
-    return GFCard(
-        title: GFListTile(
+    return Card(
+        /*title: GFListTile(
           avatar: AvatarLoader(
               saving: saving, avatar: widget.expense.type?.nameType ?? ''),
           title: widget.input ? _inputCommerce() : _textCommerce(),
           subTitle: _inputDate(),
           description: widget.input ? _inputValue() : _textValue(),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _getInputs(),
-        ),
-        buttonBar: GFButtonBar(
+        ),*/
+        child: ListTile(
+      leading: AvatarLoader(
+          saving: saving, avatar: widget.expense.type?.nameType ?? ''),
+      title: widget.input ? _inputCommerce() : _textCommerce(),
+      subtitle: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 5,
+        children: _getInputs(),
+      ),
+    )
+
+        /*buttonBar: GFButtonBar(
             runAlignment: WrapAlignment.end,
             alignment: WrapAlignment.end,
             crossAxisAlignment: WrapCrossAlignment.end,
-            children: _buttons()));
+            children: _buttons())*/
+        );
   }
 
   List<Widget> _getInputs() {
     if (!validPlanCycle) {
-      return [_inputDescription(), _inputCategory()];
+      return [
+        _inputDate(),
+        (widget.input ? _inputValue() : _textValue()),
+        _inputDescription(),
+        _inputCategory(),
+        Row(children: _buttons())
+      ];
     }
-    return [_inputDescription(), _inputPlan()];
+    return [
+      _inputDate(),
+      (widget.input ? _inputValue() : _textValue()),
+      _inputDescription(),
+      const SizedBox(height: 10),
+      _inputPlan(),
+      Row(children: _buttons())
+    ];
   }
 
   _initSelectedProvider() {
@@ -87,37 +108,38 @@ class _ExpenseCardState extends State<ExpenseCard> {
 
   List<Widget> _buttons() {
     List<Widget> widgets = <Widget>[];
-    widgets.add(GFButton(
+
+    widgets.add(TextButton(
       onPressed: _validToSave() ? _saveExpense : null,
-      text: 'Guardar',
-      icon: Icon(
+      child: Text('Guardar'),
+      /*icon: Icon(
         Icons.save,
         color: _validToSave() ? GFColors.PRIMARY : GFColors.LIGHT,
       ),
-      type: GFButtonType.outline2x,
+      type: GFButtonType.outline2x,*/
     ));
     if (!widget.input && widget.expense.type == ExpenseType.cash) {
-      widgets.add(GFButton(
+      widgets.add(TextButton(
         onPressed: saving ? null : _deleteExpense,
-        color: GFColors.DANGER,
+        /*color: GFColors.DANGER,
         icon: Icon(
           Icons.delete,
           color: saving ? GFColors.LIGHT : GFColors.DANGER,
         ),
-        type: GFButtonType.outline2x,
-        text: 'Eliminar',
+        type: GFButtonType.outline2x,*/
+        child: Text('Eliminar'),
       ));
     }
     if (!widget.input && widget.expense.type != ExpenseType.cash) {
-      widgets.add(GFButton(
+      widgets.add(TextButton(
         onPressed: saving ? null : _fixExpenseMessage,
-        color: GFColors.FOCUS,
+        /*color: GFColors.FOCUS,
         icon: Icon(
           Icons.double_arrow_rounded,
           color: saving ? GFColors.LIGHT : GFColors.FOCUS,
         ),
-        type: GFButtonType.outline2x,
-        text: 'Ajustar',
+        type: GFButtonType.outline2x,*/
+        child: Text('Ajustar'),
       ));
     }
     return widgets;
@@ -294,10 +316,9 @@ class _ExpenseCardState extends State<ExpenseCard> {
   }
 
   _inputDate() {
-    return GFButton(
+    return TextButton(
       onPressed: widget.expense.type == ExpenseType.cash ? _datePicker : null,
-      shape: GFButtonShape.pills,
-      text: dateFormat.format(widget.expense.date!),
+      child: Text(dateFormat.format(widget.expense.date!)),
     );
   }
 

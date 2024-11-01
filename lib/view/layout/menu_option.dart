@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:personal_budget/view/expenses/expense_list.dart';
 //import 'package:getwidget/colors/gf_color.dart';
 //import 'package:personal_budget/view/charts/budget_charts.dart';
 //import 'package:personal_budget/view/cycle/cycles_list.dart';
@@ -23,8 +24,8 @@ class MenuOption extends StatelessWidget {
       title: Text(option.menuTitle),
       onTap: () => _navigateTo(context, option),
       selected: selectedId == option,
-      selectedTileColor: Colors.blueGrey,
-      selectedColor: Colors.blueAccent,
+      selectedTileColor: Colors.blueAccent,
+      selectedColor: Colors.white,
     );
   }
 
@@ -47,18 +48,16 @@ class MenuOption extends StatelessWidget {
     switch (option) {
       case MenuList.login:
         return const LoginView();
-      /* case MenuList.expense:
+      case MenuList.expense:
         return const ExpensesList();
-      case MenuList.cycle:
+      /*case MenuList.cycle:
         return const CyclesList();
       case MenuList.charts:
         return const BudgetCharts();
       case MenuList.plan:
-        return const PlanCycleList();
+        return const PlanCycleList();*/
       default:
-        return const ExpensesList();*/
-      default:
-        null;
+        return const ExpensesList();
     }
   }
 }

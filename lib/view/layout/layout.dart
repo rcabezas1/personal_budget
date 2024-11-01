@@ -35,7 +35,13 @@ class Layout extends StatelessWidget {
         //searchBar: searchBar ?? false,
         //searchHintText: "Buscar",
         //searchController: searchController,
-        title: titleWidget ?? Text(title),
+        foregroundColor: Colors.white,
+        title: titleWidget ??
+            Text(
+              title,
+              style: TextStyle(fontSize: 20),
+            ),
+        titleTextStyle: TextStyle(color: Colors.white),
         actions: actions,
       ),
       drawer: Drawer(
@@ -50,27 +56,39 @@ class Layout extends StatelessWidget {
     );
   }
 
-  /*Widget _getHeader() {
-    return GFDrawerHeader(
-        decoration: const BoxDecoration(color: GFColors.PRIMARY),
-        centerAlign: true,
-        currentAccountPicture: GFAvatar(
-          backgroundColor: GFColors.FOCUS,
+  Widget _getTitle() {
+    return const ListTile(
+      trailing: Image(image: AssetImage("assets/icon.png")),
+      title: Text("Personal Budget"),
+      selected: true,
+      selectedTileColor: Colors.blueAccent,
+      selectedColor: Colors.white,
+    );
+  }
+
+  Widget _getAvatar() {
+    return Column(
+      spacing: 10,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        const SizedBox(height: 10),
+        CircleAvatar(
+          backgroundColor: Colors.amber,
+          radius: 50,
           backgroundImage: _getBackGroundImage(),
         ),
-        child: GFListTile(
-          titleText: 'Personal Budget',
-          subTitleText: FirebaseAuth.instance.currentUser?.displayName ??
-              'Presupuesto Gastos',
-          listItemTextColor: GFColors.LIGHT,
-        ));
-  }*/
+        const SizedBox(height: 10),
+      ],
+    );
+  }
 
   List<Widget> _getMenuOptions() {
-    // var header =  _getHeader();
+    var avatar = _getAvatar();
+    var title = _getTitle();
     if (FirebaseAuth.instance.currentUser != null) {
       return [
-        //header,
+        title,
+        avatar,
         MenuOption(option: MenuList.expense, selectedId: id),
         MenuOption(option: MenuList.cycle, selectedId: id),
         MenuOption(option: MenuList.charts, selectedId: id),
@@ -78,7 +96,7 @@ class Layout extends StatelessWidget {
         MenuOption(option: MenuList.login, selectedId: id)
       ];
     }
-    return [/*header,*/ MenuOption(option: MenuList.login, selectedId: id)];
+    return [title, MenuOption(option: MenuList.login, selectedId: id)];
   }
 
   _getBackGroundImage() {

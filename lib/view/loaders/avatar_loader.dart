@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 
 class AvatarLoader extends StatelessWidget {
   const AvatarLoader(
@@ -12,15 +11,13 @@ class AvatarLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return saving
-        ? const GFLoader(
-            type: GFLoaderType.circle,
-            loaderColorOne: GFColors.INFO,
-            loaderColorTwo: GFColors.PRIMARY,
-            loaderColorThree: GFColors.INFO,
+        ? const CircleAvatar(
+            backgroundImage: AssetImage('assets/loading.gif'),
+            radius: 20,
           )
-        : GFAvatar(
-            backgroundColor: GFColors.LIGHT,
-            size: size ?? GFSize.MEDIUM,
+        : CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 20,
             backgroundImage: AssetImage('assets/$avatar.png'),
           );
   }
