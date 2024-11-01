@@ -51,11 +51,11 @@ class UserProvider with ChangeNotifier {
     );
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    return FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   Future<void> signout() async {
-    FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
     notifyListeners();
   }
 

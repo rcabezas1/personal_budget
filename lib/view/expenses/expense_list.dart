@@ -4,6 +4,7 @@ import 'package:personal_budget/model/expenses/expense.dart';
 import 'package:personal_budget/view/charts/budget_charts.dart';
 import 'package:personal_budget/view/expenses/add_expense.dart';
 import 'package:personal_budget/view/expenses/expense_card.dart';
+import 'package:personal_budget/view/inputs/formats.dart';
 //import 'package:personal_budget/view/inputs/formats.dart';
 import 'package:personal_budget/view/layout/layout.dart';
 import 'package:personal_budget/view/layout/menu_list.dart';
@@ -44,44 +45,37 @@ class _ExpensesListState extends State<ExpensesList> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      id: MenuList.expense,
-      title: MenuList.expense.menuTitle,
-      searchBar: true,
-      searchController: _searchController,
-      actions: [
-        IconButton(
-          onPressed: _showCharts,
-          icon: const Icon(
-            Icons.bar_chart,
-            color: Colors.white,
+        id: MenuList.expense,
+        title: MenuList.expense.menuTitle,
+        searchBar: true,
+        searchController: _searchController,
+        actions: [
+          IconButton(
+            onPressed: _showCharts,
+            icon: const Icon(
+              Icons.bar_chart,
+              color: Colors.white,
+            ),
           ),
-        ),
-        IconButton(
-          onPressed: _addExpense,
-          icon: const Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-        )
-      ],
-      body: /*FloatingWidget(
-          showBlurness: showblur,
-          verticalPosition: 80,
-          body: */
-          Consumer<BudgetProvider>(
-              builder: (context, provider, child) => RefreshIndicator(
-                  onRefresh: _searchProviderMessages,
-                  child: _loading
-                      ? const ScreenLoader()
-                      : _listBuilder(provider))),
-      /* child: alertWidget,
-        ),
+          IconButton(
+            onPressed: _addExpense,
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+          )
+        ],
+        body: Consumer<BudgetProvider>(
+            builder: (context, provider, child) => RefreshIndicator(
+                onRefresh: _searchProviderMessages,
+                child:
+                    _loading ? const ScreenLoader() : _listBuilder(provider))),
         floatingActionButton: FloatingActionButton(
           onPressed: _addExpense,
-          backgroundColor: GFColors.PRIMARY,
-          child: const Icon(Icons.add),
-        )*/
-    );
+          backgroundColor: Colors.blue,
+          splashColor: Colors.white,
+          child: const Icon(Icons.add, color: Colors.white),
+        ));
   }
 
   _listBuilder(BudgetProvider provider) {
@@ -97,51 +91,39 @@ class _ExpensesListState extends State<ExpensesList> {
     );
   }
 
-  Future<void> _deleteExpense(Expense message) async {
+  Future<void> _deleteExpense(Expense message) async => showDialog<Expense>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Está seguro de eliminar?"),
+          content: Text(
+            '${message.commerce} \$${currencyFormat.format(message.value)}',
+            style: TextStyle(fontSize: 20),
+          ),
+          actions: <Widget>[
+            FilledButton(
+              onPressed: () => Navigator.pop(context, message),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context, message);
+                _doDelete(message);
+              },
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Eliminar'),
+            ),
+          ],
+        ),
+      );
+
+  _doDelete(Expense message) async {
     BudgetProvider provider =
         Provider.of<BudgetProvider>(context, listen: false);
-    /*setState(() {
-      showblur = true;
-      alertWidget = GFAlert(
-        type: GFAlertType.rounded,
-        title: "Está seguro de eliminar?",
-        content: Text(
-            '${message.commerce} \$${currencyFormat.format(message.value)}'),
-        bottomBar: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          GFButton(
-            onPressed: () {
-              setState(() {
-                alertWidget = null;
-                showblur = false;
-              });
-            },
-            shape: GFButtonShape.pills,
-            text: "Cancelar",
-          ),
-          const SizedBox(width: 5),
-          GFButton(
-            onPressed: () {
-              _doDelete(message, provider);
-            },
-            color: Colors.red,
-            shape: GFButtonShape.pills,
-            text: "Eliminar",
-          )
-        ]),
-      );
-    });*/
-  }
-
-  _doDelete(Expense message, BudgetProvider provider) async {
     await ExpenseService()
         .delete(message.id)
         .then((value) => _updateCard(message));
     await PlanCycleService().deleteExpense(message);
     await provider.searchPlanCycle(true);
-    setState(() {
-      alertWidget = null;
-      showblur = false;
-    });
   }
 
   Future<void> _updateCard(Expense newMessage) async {

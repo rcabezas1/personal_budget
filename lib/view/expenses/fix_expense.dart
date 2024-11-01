@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/model/expenses/expense.dart';
+import 'package:personal_budget/model/expenses/expense_type.dart';
 import 'package:personal_budget/service/expense_service.dart';
 import 'package:personal_budget/view/expenses/expense_list.dart';
-import 'package:personal_budget/view/inputs/formats.dart';
 import 'package:personal_budget/view/inputs/input_currency.dart';
+import 'package:personal_budget/view/loaders/avatar_loader.dart';
 import '../inputs/text_currency.dart';
-import 'package:personal_budget/model/expenses/expense_type.dart';
-import '../loaders/avatar_loader.dart';
 
 class FixExpense extends StatefulWidget {
   const FixExpense({super.key, required this.expense});
@@ -23,66 +21,73 @@ class FixExpenseState extends State<FixExpense> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ajustar valor'),
-        backgroundColor: Colors.blue,
-      ),
-      body: SingleChildScrollView(
-        restorationId: "fix_expense",
-        child: /*GFCard(
-              title: GFListTile(
-                avatar: AvatarLoader(
-                    saving: saving,
-                    avatar: widget.expense.type?.nameType ?? ''),
-                title: _textCommerce(),
-                description: _textDate(),
-                subTitle: _textDescription(),
-              ),
-              content: */
-            Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _inputLabel('Valor Inicial'),
-            const SizedBox.square(
-              dimension: 20,
-            ),
-            TextCurrency(
-              value: widget.expense.initialValue!,
-              size: 10,
-            ),
-            const SizedBox.square(
-              dimension: 30,
-            ),
-            _inputLabel('Ajuste Valor'),
-            const SizedBox.square(
-              dimension: 20,
-            ),
-            _inputValue(),
-          ],
-        ), /*
-              buttonBar: GFButtonBar(
-                  runAlignment: WrapAlignment.end,
-                  alignment: WrapAlignment.end,
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  children: _buttons())*/
-      ),
-    );
+        appBar: AppBar(
+          title: const Text(
+            'Ajustar valor',
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.blue,
+        ),
+        body: SingleChildScrollView(
+            restorationId: "fix_expense",
+            child: Card(
+                margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                color: Colors.grey.shade50,
+                child: ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 20),
+                  titleAlignment: ListTileTitleAlignment.top,
+                  title: Row(
+                    spacing: 10,
+                    children: [
+                      AvatarLoader(
+                        saving: saving,
+                        avatar: widget.expense.type?.nameType ?? '',
+                      ),
+                      _textCommerce(),
+                    ],
+                  ),
+                  subtitle: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
+                    children: _getInputs(),
+                  ),
+                ))));
   }
 
-  /*List<Widget> _buttons() {
-    return <Widget>[
-      GFButton(
-        onPressed: !saving ? _saveFixed : null,
-        text: 'Guardar',
-        icon: Icon(
-          Icons.save,
-          color: !saving ? GFColors.PRIMARY : GFColors.LIGHT,
-        ),
-        type: GFButtonType.outline2x,
-      )
+  List<Widget> _getInputs() {
+    return [
+      const SizedBox.square(
+        dimension: 10,
+      ),
+      _inputLabel('Valor Inicial'),
+      TextCurrency(
+        value: widget.expense.initialValue!,
+        size: 30,
+      ),
+      const SizedBox.square(
+        dimension: 20,
+      ),
+      _inputLabel('Ajuste Valor'),
+      _inputValue(),
+      const SizedBox.square(
+        dimension: 20,
+      ),
+      _buttons()
     ];
-  }*/
+  }
+
+  Widget _buttons() {
+    return Row(
+        spacing: 5,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FilledButton.icon(
+              onPressed: !saving ? _saveFixed : null, label: Text('Guardar'))
+        ]);
+  }
 
   _saveFixed() async {
     setState(() => saving = true);

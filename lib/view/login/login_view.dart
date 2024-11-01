@@ -44,12 +44,12 @@ class LoginView extends StatelessWidget {
         ))));
   }
 
-  _signInAndRedirect(BuildContext context) async {
+  Future<void> _signInAndRedirect(BuildContext context) async {
     UserProvider provider = Provider.of<UserProvider>(context, listen: false);
     BudgetProvider budgetProvider =
         Provider.of<BudgetProvider>(context, listen: false);
     await provider.signInWithGoogle();
-    await _findUserData(budgetProvider).then((value) => _homeNavigation);
+    await _findUserData(budgetProvider);
   }
 
   Widget _singInSignOut(BuildContext context) {
@@ -57,7 +57,8 @@ class LoginView extends StatelessWidget {
     if (!provider.isLogged()) {
       return SignInButton(Buttons.Google,
           text: "Ingresar con Google",
-          onPressed: () => _signInAndRedirect(context));
+          onPressed: () => _signInAndRedirect(context)
+              .then((value) => _homeNavigation(context)));
     }
     return IconButton(
       color: Colors.pink,

@@ -11,13 +11,13 @@ class AvatarLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return saving
-        ? const CircleAvatar(
+        ? CircleAvatar(
             backgroundImage: AssetImage('assets/loading.gif'),
-            radius: 20,
+            radius: size ?? 30,
           )
         : CircleAvatar(
             backgroundColor: Colors.white,
-            radius: 20,
+            radius: size ?? 30,
             backgroundImage: AssetImage('assets/$avatar.png'),
           );
   }

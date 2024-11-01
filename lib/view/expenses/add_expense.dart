@@ -16,8 +16,12 @@ class AddExpenseState extends State<AddExpense> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Agregar Gasto'),
+          title: const Text(
+            'Agregar Gasto',
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
           restorationId: "manual",
