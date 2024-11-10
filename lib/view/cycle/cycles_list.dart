@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/view/cycle/add_cycle.dart';
 import 'package:personal_budget/model/cycle/budget_cycle.dart';
@@ -26,29 +25,23 @@ class _CyclesListState extends State<CyclesList> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-        id: MenuList.cycle,
-        title: MenuList.cycle.menuTitle,
-        actions: [
-          GFIconButton(
-            onPressed: _addCycle,
-            type: GFButtonType.transparent,
-            icon: const Icon(
-              Icons.add,
-              color: GFColors.LIGHT,
-            ),
-          )
-        ],
-        body: GFFloatingWidget(
-          showBlurness: showblur,
-          verticalPosition: 80,
-          body: Consumer<BudgetProvider>(
-              builder: (context, provider, child) => RefreshIndicator(
-                  onRefresh: _searchCycles,
-                  child: _loading
-                      ? const ScreenLoader()
-                      : _listBuilder(provider))),
-          child: alertWidget,
-        ));
+      id: MenuList.cycle,
+      title: MenuList.cycle.menuTitle,
+      actions: [
+        IconButton(
+          onPressed: _addCycle,
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        )
+      ],
+      body: Consumer<BudgetProvider>(
+          builder: (context, provider, child) => RefreshIndicator(
+              onRefresh: _searchCycles,
+              child: _loading ? const ScreenLoader() : _listBuilder(provider))),
+      //child: alertWidget,
+    );
   }
 
   _listBuilder(BudgetProvider provider) {
@@ -86,38 +79,30 @@ class _CyclesListState extends State<CyclesList> {
     );
   }
 
-  Future<void> _delete(BudgetCycle message) async {
-    setState(() {
-      showblur = true;
-      alertWidget = GFAlert(
-        type: GFAlertType.rounded,
-        title: "Está seguro de eliminar?",
-        content: Text(
-            '${message.description} \nVigencia: ${dateFormat.format(message.startDate)} -  ${dateFormat.format(message.endDate)}'),
-        bottomBar: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          GFButton(
-            onPressed: () {
-              setState(() {
-                alertWidget = null;
-                showblur = false;
-              });
-            },
-            shape: GFButtonShape.pills,
-            text: "Cancelar",
+  Future<void> _delete(BudgetCycle message) async => showDialog<BudgetCycle>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Está seguro de eliminar?"),
+          content: Text(
+            '${message.description} \nVigencia: ${dateFormat.format(message.startDate)} -  ${dateFormat.format(message.endDate)}',
+            style: TextStyle(fontSize: 20),
           ),
-          const SizedBox(width: 5),
-          GFButton(
-            onPressed: () {
-              _doDelete(message);
-            },
-            color: GFColors.DANGER,
-            shape: GFButtonShape.pills,
-            text: "Eliminar",
-          )
-        ]),
+          actions: <Widget>[
+            FilledButton(
+              onPressed: () => Navigator.pop(context, message),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(context, message);
+                _doDelete(message);
+              },
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Eliminar'),
+            ),
+          ],
+        ),
       );
-    });
-  }
 
   _doDelete(BudgetCycle message) async {
     await CycleService().delete(message.id).then((value) => _searchCycles());

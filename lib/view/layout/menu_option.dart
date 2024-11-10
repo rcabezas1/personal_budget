@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:personal_budget/view/charts/budget_charts.dart';
+import 'package:personal_budget/view/cycle/cycles_list.dart';
 import 'package:personal_budget/view/expenses/expense_list.dart';
-//import 'package:getwidget/colors/gf_color.dart';
-//import 'package:personal_budget/view/charts/budget_charts.dart';
-//import 'package:personal_budget/view/cycle/cycles_list.dart';
-//import 'package:personal_budget/view/expenses/expense_list.dart';
-//import 'package:personal_budget/view/plan/plan_cycle_list.dart';
 import 'package:personal_budget/view/login/login_view.dart';
 import 'package:provider/provider.dart';
 import 'package:personal_budget/service/providers/user_provider.dart';
@@ -50,11 +47,11 @@ class MenuOption extends StatelessWidget {
         return const LoginView();
       case MenuList.expense:
         return const ExpensesList();
-      /*case MenuList.cycle:
-        return const CyclesList();
       case MenuList.charts:
         return const BudgetCharts();
-      case MenuList.plan:
+      case MenuList.cycle:
+        return const CyclesList();
+      /*case MenuList.plan:
         return const PlanCycleList();*/
       default:
         return const ExpensesList();

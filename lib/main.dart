@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:personal_budget/firebase_options.dart';
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/service/providers/user_provider.dart';
@@ -42,6 +43,15 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       restorationScopeId: "personal_budget",
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('es', 'CO'),
+      ],
+      locale: Locale('es', 'CO'),
       home: FirebaseAuth.instance.currentUser != null
           ? const ExpensesList()
           : const LoginView(),
