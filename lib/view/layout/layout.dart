@@ -46,7 +46,7 @@ class Layout extends StatelessWidget {
       ),
       drawer: Drawer(
         child: ListView(
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           children: _getMenuOptions(),
         ),
       ),
@@ -61,6 +61,7 @@ class Layout extends StatelessWidget {
       trailing: Image(image: AssetImage("assets/icon.png")),
       title: Text("Personal Budget"),
       selected: true,
+      contentPadding: EdgeInsets.all(20),
       selectedTileColor: Colors.blueAccent,
       selectedColor: Colors.white,
     );

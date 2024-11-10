@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/service/providers/budget_provider.dart';
 import 'package:personal_budget/view/inputs/formats.dart';
 import 'package:personal_budget/view/layout/layout.dart';
@@ -41,47 +40,40 @@ class _PlanCycleListState extends State<PlanCycleList> {
       titleWidget: _progress(),
       searchBar: true,
       searchController: _searchController,
-      body: GFFloatingWidget(
-        showBlurness: showblur,
-        verticalPosition: 80,
-        body: Consumer<BudgetProvider>(
-            builder: (context, provider, child) => RefreshIndicator(
-                onRefresh: _searchCycles,
-                child:
-                    _loading ? const ScreenLoader() : _listBuilder(provider))),
-        child: alertWidget,
-      ),
+      body: Consumer<BudgetProvider>(
+          builder: (context, provider, child) => RefreshIndicator(
+              onRefresh: _searchCycles,
+              child: _loading ? const ScreenLoader() : _listBuilder(provider))),
+      //child: alertWidget,
     );
   }
 
   Widget _progress() {
     return Consumer<BudgetProvider>(
-        builder: (context, provider, child) => GFProgressBar(
-            percentage: _getPercentage(provider),
-            lineHeight: 40,
-            backgroundColor: _getPercentageColor(provider),
-            progressBarColor: GFColors.INFO,
-            child: Column(
-              children: [
-                const SizedBox.square(
-                  dimension: 2,
-                ),
-                Text(
-                  '\$${currencyFormat.format(_getActual(provider))}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: GFColors.LIGHT,
-                      fontSize: 20),
-                ),
-                Text(
-                  'Presupuesto: \$${currencyFormat.format(_getInitial(provider))}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: GFColors.LIGHT,
-                      fontSize: 12),
-                ),
-              ],
-            )));
+        builder: (context, provider, child) => Column(children: [
+              Text(
+                '\$${currencyFormat.format(_getActual(provider))}',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 20),
+              ),
+              LinearProgressIndicator(
+                value: _getPercentage(provider),
+                backgroundColor: _getPercentageColor(provider),
+                color: Colors.lightGreen,
+                minHeight: 15,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              Text(
+                'Presupuesto: \$${currencyFormat.format(_getInitial(provider))}',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 12),
+              ),
+              SizedBox(height: 10)
+            ]));
   }
 
   double _getPercentage(BudgetProvider provider) {
@@ -105,9 +97,9 @@ class _PlanCycleListState extends State<PlanCycleList> {
       actual = actual + (element.actualValue ?? 0);
     });
     if (actual < 0) {
-      return GFColors.DANGER;
+      return Colors.red;
     }
-    return GFColors.DARK;
+    return Colors.blueGrey;
   }
 
   _getActual(BudgetProvider provider) {

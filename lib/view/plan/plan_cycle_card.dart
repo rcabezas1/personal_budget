@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:personal_budget/model/plan/plan.dart';
 import 'package:personal_budget/model/plan/plan_cycle.dart';
 import 'package:personal_budget/view/inputs/formats.dart';
-
 import 'package:personal_budget/view/loaders/avatar_loader.dart';
 
 class PlanCycleCard extends StatefulWidget {
@@ -20,45 +18,48 @@ class PlanCycleCardState extends State<PlanCycleCard> {
   bool saving = false;
   @override
   Widget build(BuildContext context) {
-    return GFCard(
-      title: GFListTile(
-          avatar:
+    return Card(
+        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        color: Colors.grey.shade50,
+        child: ListTile(
+          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 20),
+          titleAlignment: ListTileTitleAlignment.top,
+          title: Row(
+            spacing: 10,
+            children: [
               AvatarLoader(saving: saving, avatar: widget.cycle.clasification!),
-          titleText: '${widget.cycle.category}',
-          subTitleText: widget.cycle.clasification),
-      content: SizedBox.square(
-          child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-            _progress(),
-            _valueMoney("Presupuesto:", widget.cycle.initialValue!),
-          ])),
-    );
+              Text('${widget.cycle.category}')
+            ],
+          ),
+          subtitle: SizedBox.square(
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                Text('${widget.cycle.clasification}'),
+                _progress(),
+                _valueMoney("Presupuesto:", widget.cycle.initialValue!),
+              ])),
+        ));
   }
 
   _progress() {
-    return GFProgressBar(
-        percentage: _getPercentage(
-            widget.cycle.initialValue!, widget.cycle.actualValue!),
-        lineHeight: 45,
-        backgroundColor: _getPercentageColor(widget.cycle.actualValue!),
-        progressBarColor: GFColors.SECONDARY,
-        child: Column(
-          children: [
-            const SizedBox.square(
-              dimension: 4,
-            ),
-            Text(
-              '\$${currencyFormat.format(widget.cycle.actualValue!)}',
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: GFColors.LIGHT,
-                  fontSize: GFSize.SMALL),
-            ),
-          ],
-        ));
+    return Column(
+      children: [
+        Text(
+          '\$${currencyFormat.format(widget.cycle.actualValue!)}',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        LinearProgressIndicator(
+          value: _getPercentage(
+              widget.cycle.initialValue!, widget.cycle.actualValue!),
+          minHeight: 20,
+          borderRadius: BorderRadius.circular(20),
+          backgroundColor: _getPercentageColor(widget.cycle.actualValue!),
+        )
+      ],
+    );
   }
 
   double _getPercentage(double initial, double actual) {
@@ -71,9 +72,9 @@ class PlanCycleCardState extends State<PlanCycleCard> {
 
   _getPercentageColor(double actual) {
     if (actual < 0) {
-      return GFColors.DANGER;
+      return Colors.red;
     }
-    return GFColors.DARK;
+    return Colors.blueGrey;
   }
 
   _valueMoney(String title, double value) {
@@ -89,8 +90,7 @@ class PlanCycleCardState extends State<PlanCycleCard> {
           const SizedBox.square(dimension: 10),
           Text(
             '\$${currencyFormat.format(value)}',
-            style:
-                TextStyle(color: (value > 0 ? GFColors.DARK : GFColors.DANGER)),
+            style: TextStyle(color: (value > 0 ? Colors.blueGrey : Colors.red)),
           )
         ]);
   }
